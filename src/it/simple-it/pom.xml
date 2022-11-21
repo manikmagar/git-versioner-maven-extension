@@ -5,7 +5,7 @@
 
   <groupId>com.github.manikmagar.it</groupId>
   <artifactId>simple-it</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.0</version>
 
   <description>A simple IT verifying the basic use case.</description>
 
@@ -21,10 +21,10 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>touch</id>
+            <id>version</id>
             <phase>validate</phase>
             <goals>
-              <goal>touch</goal>
+              <goal>set</goal>
             </goals>
           </execution>
         </executions>

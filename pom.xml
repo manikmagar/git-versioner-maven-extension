@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.manikmagar</groupId>
   <artifactId>git-versioner-maven-plugin</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.0.0</version>
   <packaging>maven-plugin</packaging>
 
-  <name>git-versioner-maven-plugin Maven Plugin</name>
-
-  <url>https://www.javastreets.com</url>
+  <name>Git Versioner Maven Plugin</name>
+  <description>Generate maven project version from git commit logs</description>
+  <inceptionYear>2022</inceptionYear>
+  <url>https://github.com/manikmagar/git-versioner-maven-plugin</url>
 
   <prerequisites>
     <maven>${maven.version}</maven>
@@ -20,31 +19,22 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <maven.version>3.3.9</maven.version>
   </properties>
 
-  <dependencyManagement>
-
-    <dependencies>
-      <dependency>
-        <groupId>org.eclipse.jgit</groupId>
-        <artifactId>org.eclipse.jgit</artifactId>
-        <version>6.3.0.202209071007-r</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
+      <version>6.3.0.202209071007-r</version>
     </dependency>
     <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>3.21.0</version>
-      <scope>test</scope>
+      <groupId>org.twdata.maven</groupId>
+      <artifactId>mojo-executor</artifactId>
+      <version>2.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -60,12 +50,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>${maven.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
       <version>${maven.version}</version>
       <scope>test</scope>
@@ -73,13 +57,25 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.6.0</version>
+      <version>3.6.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.23.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <version>4.8.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -88,11 +84,22 @@
       <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.bsideup.jabel</groupId>
+      <artifactId>jabel-javac-plugin</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.7.1</version>
+        </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
@@ -134,11 +141,69 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.27.2</version>
+        <configuration>
+          <formats>
+            <format>
+              <includes>
+                <include>*.md</include>
+                <include>.gitignore</include>
+              </includes>
+              <!-- define the steps to apply to those files -->
+              <trimTrailingWhitespace/>
+              <endWithNewline/>
+              <indent>
+                <tabs>true</tabs>
+                <spacesPerTab>4</spacesPerTab>
+              </indent>
+            </format>
+          </formats>
+          <!-- define a language-specific format -->
+          <java>
+            <eclipse>
+              <version>4.13.0</version>                     <!-- optional -->
+            </eclipse>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <id>checkSpotlessx</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+          <execution>
+            <id>applySpotless</id>
+            <goals>
+              <goal>apply</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <!-- Make sure we're not using Java 9+ APIs -->
+          <release>8</release>
+          <source>11</source>
+          <target>11</target>
+          <!-- The following setting can be avoided on Java 14 and higher -->
+          <compilerArgs>
+            <arg>-Xplugin:jabel</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.6.0</version>
         <configuration>
-          <!-- <goalPrefix>maven-archetype-plugin</goalPrefix> -->
+          <goalPrefix>git-versioner</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
         </configuration>
         <executions>
@@ -161,16 +226,58 @@
 
   <profiles>
     <profile>
+      <id>git-versioner</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>com.github.manikmagar</groupId>
+              <artifactId>versioner-maven-plugin</artifactId>
+              <version>0.0.0</version>
+              <executions>
+                <execution>
+                  <id>set-version</id>
+                  <goals>
+                    <goal>setVersion</goal>
+                  </goals>
+                  <phase>validate</phase>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+    <profile>
+      <id>intellij-idea-only</id>
+      <activation>
+        <property>
+          <name>idea.maven.embedder.version</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <release>11</release>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>run-its</id>
       <build>
-
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <version>3.1.0</version>
             <configuration>
-              <debug>true</debug>
+              <debug>false</debug>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
@@ -179,8 +286,7 @@
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <settingsFile>src/it/settings.xml</settingsFile>
               <goals>
-                <goal>clean</goal>
-                <goal>test-compile</goal>
+                <goal>git-versioner:set</goal>
               </goals>
             </configuration>
             <executions>

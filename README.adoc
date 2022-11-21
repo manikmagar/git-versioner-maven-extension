@@ -1,0 +1,4 @@
+= Git Versioner Maven Plugin
+
+Generate the semver version using the git commit history.
+

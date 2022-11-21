@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.manikmagar</groupId>
-  <artifactId>git-versioner-maven-plugin</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <artifactId>versioner-maven-plugin-test</artifactId>
+  <version>0.0.0</version>
   <packaging>jar</packaging>
   <name>Test MyMojo</name>
 
