@@ -1,1 +1,0 @@
-# git-versioner-maven-plugin

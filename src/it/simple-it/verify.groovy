@@ -1,3 +1,7 @@
-File touchFile = new File( basedir, "target/touch.txt" );
+import java.nio.file.Files
+import java.nio.file.Paths
 
-assert touchFile.isFile()
+def content = Files.readString(Paths.get("target/it/simple-it/pom.xml"))
+println content
+assert !content.contains("  <artifactId>simple-it</artifactId>\n" +
+        "  <version>0.0.0</version>")
