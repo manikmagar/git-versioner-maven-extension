@@ -1,0 +1,80 @@
+project:
+  name: git-versioner-maven-plugin
+  description: Generate maven project version from git commit logs
+  longDescription: |
+    Generate maven project version from git commit logs.
+
+  links:
+    homepage: https://github.com/manikmagar/
+    documentation: https://github.com/manikmagar/git-versioner-maven-plugin
+    license: https://github.com/manikmagar/git-versioner-maven-plugin/blob/main/LICENSE
+    contribute: https://github.com/manikmagar/mulefd/blob/main/README.adoc
+  authors:
+    - Manik Magar
+  license: MIT
+  inceptionYear: 2022
+  tags:
+    - maven
+  java:
+    groupId: com.github.manikmagar
+    version: 11
+
+release:
+  github:
+    overwrite: true
+    draft: false
+    sign: true
+    releaseName: '{{tagName}}'
+    skipTag: true
+    milestone:
+      close: false
+    changelog:
+      formatted: always
+      preset: conventional-commits
+      format: '- {{commitShortHash}} {{commitTitle}}'
+      skipMergeCommits: true
+      contributors:
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+      labelers:
+        - label: 'dependencies'
+          title: 'chore(deps):'
+          order: 130
+      categories:
+        - title: '⚙️  Dependencies'
+          key: 'dependencies'
+          order: 80
+          labels:
+            - 'dependencies'
+      hide:
+        categories:
+          - 'merge'
+        contributors:
+          - 'GitHub'
+
+checksum:
+  individual: true
+
+signing:
+  active: always
+  armored: true
+
+deploy:
+  maven:
+    nexus2:
+      maven-central:
+        active: ALWAYS
+        url: https://oss.sonatype.org/service/local
+        applyMavenCentralRules: true
+        closeRepository: true
+        releaseRepository: true
+        stagingRepositories:
+          - target/staging-deploy
+
+announce:
+  twitter:
+    active: RELEASE
+    status: '🚀 {{projectName}} {{projectVersion}} has been released! {{releaseNotesUrl}}'
+  mastodon:
+    active: RELEASE
+    host: fosstodon.org
+    status: '🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}'
