@@ -5,7 +5,7 @@
 
   <groupId>com.github.manikmagar</groupId>
   <artifactId>git-versioner-maven-plugin</artifactId>
-  <version>0.0.0</version>
+  <version>V-LATEST</version>
   <packaging>maven-plugin</packaging>
 
   <name>Git Versioner Maven Plugin</name>
@@ -23,74 +23,43 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <maven.version>3.3.9</maven.version>
+    <project.github.repository>manikmagar/maven-sample-app</project.github.repository>
+    <nexus.url>https://oss.sonatype.org</nexus.url>
+    <repository.url>git@github.com:${project.github.repository}.git</repository.url>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>6.3.0.202209071007-r</version>
-    </dependency>
-    <dependency>
-      <groupId>org.twdata.maven</groupId>
-      <artifactId>mojo-executor</artifactId>
-      <version>2.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>${maven.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
-      <version>${maven.version}</version>
-      <scope>test</scope>
-    </dependency> 
-    <dependency>
-      <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.6.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>3.23.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-inline</artifactId>
-      <version>4.8.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-testing</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>3.3.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.bsideup.jabel</groupId>
-      <artifactId>jabel-javac-plugin</artifactId>
-      <version>1.0.0</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+  <scm>
+    <connection>scm:git:${repository.url}</connection>
+    <developerConnection>scm:ssh:${repository.url}</developerConnection>
+    <tag>HEAD</tag>
+    <url>${repository.url}</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>MIT</name>
+      <url>https://spdx.org/licenses/MIT.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>Manik Magar</name>
+    <url>https://github.com/manikmagar</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>manikmagar</id>
+      <name>Manik Magar</name>
+      <url>https://manik.magar.me</url>
+    </developer>
+  </developers>
+
+  <issueManagement>
+    <system>github.com</system>
+    <url>https://github.com/${project.github.repository}/issues</url>
+  </issueManagement>
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
@@ -106,8 +75,14 @@
         </plugin>
         <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_maven-plugin_packaging -->
         <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-sources-plugin</artifactId>
+          <version>3.2.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -131,7 +106,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-invoker-plugin</artifactId>
@@ -224,6 +199,73 @@
     </plugins>
   </build>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>6.3.0.202209071007-r</version>
+    </dependency>
+    <dependency>
+      <groupId>org.twdata.maven</groupId>
+      <artifactId>mojo-executor</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
+      <version>${maven.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.6.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.23.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <version>4.8.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-testing</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+      <version>3.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.bsideup.jabel</groupId>
+      <artifactId>jabel-javac-plugin</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
   <profiles>
     <profile>
       <id>git-versioner</id>
@@ -234,13 +276,13 @@
           <plugins>
             <plugin>
               <groupId>com.github.manikmagar</groupId>
-              <artifactId>versioner-maven-plugin</artifactId>
-              <version>0.0.0</version>
+              <artifactId>git-versioner-maven-plugin</artifactId>
+              <version>V-LATEST</version>
               <executions>
                 <execution>
                   <id>set-version</id>
                   <goals>
-                    <goal>setVersion</goal>
+                    <goal>set</goal>
                   </goals>
                   <phase>validate</phase>
                 </execution>
@@ -302,6 +344,50 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>stage-publish</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <distributionManagement>
+        <repository>
+          <id>local</id>
+          <layout>default</layout>
+          <url>file://${project.build.directory}/staging-deploy</url>
+        </repository>
+      </distributionManagement>
     </profile>
   </profiles>
 </project>
