@@ -12,19 +12,14 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- *
- *
  * <pre>
  * Generate a version from git commit history and exposes it to maven project properties.
  * Execution of this mojo will make following properties accessible during the build execution:
- * <ol>
- *   <li>git-versioner.semver</li>
- *   <li>git-versioner.major</li>
- *   <li>git-versioner.minor</li>
- *   <li>git-versioner.patch</li>
- *   <li>git-versioner.commit</li>
- *
- * </ol>
+ *   - git-versioner.semver
+ *   - git-versioner.major
+ *   - git-versioner.minor
+ *   - git-versioner.patch
+ *   - git-versioner.commit
  * </pre>
  */
 @Mojo(name = "properties", defaultPhase = LifecyclePhase.VALIDATE)
