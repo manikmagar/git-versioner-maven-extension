@@ -13,8 +13,16 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>com.github.manikmagar</groupId>
         <artifactId>git-versioner-maven-plugin</artifactId>
         <configuration>
+          <versionConfig>
+            <initial>
+              <major>1</major>
+              <minor>3</minor>
+              <patch>4</patch>
+            </initial>
+          </versionConfig>
         </configuration>
       </plugin>
     </plugins>

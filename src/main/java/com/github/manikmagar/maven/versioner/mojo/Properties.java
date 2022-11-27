@@ -2,8 +2,6 @@
 package com.github.manikmagar.maven.versioner.mojo;
 
 import com.github.manikmagar.maven.versioner.Version;
-import com.github.manikmagar.maven.versioner.VersionConfig;
-import com.github.manikmagar.maven.versioner.git.JGitVersioner;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -31,7 +29,7 @@ public class Properties extends AbstractVersionerMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		Version version = new JGitVersioner(new VersionConfig()).version();
+		Version version = getVersioner().version();
 		mavenProject.getProperties().put("git-versioner.semver", version.toSemver());
 		mavenProject.getProperties().put("git-versioner.major", version.getMajor());
 		mavenProject.getProperties().put("git-versioner.minor", version.getMinor());

@@ -10,13 +10,14 @@ a specific version keyword and watch the magic happen.
 == How does it work?
 This plugin will look at all the commit history and compute the version number upto current commit.
 
+[#versionKeywords]
 == What are version keywords?
 Version keywords are the reserved words that will define which milestone of the release is this.
 
 Plugin supports following keywords -
 
 - `[major]` - A Major version milestone Eg. 1.0.0 -> 2.0.0
-- `[minor]` - A Minor version milestone Eg. 1.1.0 -> 1.2.0
+- `[minor]` - A Minor version milestone Eg. 1.1.0 -> 1.2.
 - `[patch]` - A Patch version milestone Eg. 1.1.1 -> 1.1.2
 
 == How to configure?
@@ -49,6 +50,44 @@ It is as simple as adding following configuration to your project's pom.xml -
 <2> Add an execution for `set` goal. By default, it will be bound to maven _INITIALIZE_ phase.
 <3> Optional. If you would like to print version details during _VALIDATE_ phase.
 
+== How to start with a different version?
+It is possible that your project is already released with a certain version.
+In that case, you can configure the initial version to start using this plugin.
+
+Assuming your application released version is v1.3.4. You can set a `versionConfig.initial` configuration block as below.
+In this case, the first version calculated by this plugin will be -
+
+- Major: *2.0.0*
+- Minor: 1.*4.0*
+- Patch: 1.3.*5*
+
+.Example configuration to start version from 1.3.4
+[source,xml]
+----
+<plugin>
+    <groupId>com.github.manikmagar</groupId>
+    <artifactId>git-versioner-maven-plugin</artifactId>
+    <version>${git-versioner-maven-plugin.version}</version>
+    <configuration>
+        <versionConfig>
+            <initial>               // <1>
+                <major>1</major>
+                <minor>3</minor>
+                <patch>4</patch>
+            </initial>
+        </versionConfig>
+    </configuration>
+    <executions>
+        <execution>
+            <id>set-version</id>
+            <goals>
+                <goal>set</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
 == How do I increment version?
 Now that you have plugin configured, you can continue with your regular development.
 
@@ -60,6 +99,45 @@ git commit --allow-empty -m "chore: [<keyword>] release" // <1>
 ----
 
 <1> where `<keyword>` can be one of these - major, minor, or patch.
+
+== How to customize version keywords?
+The default link:#versionKeywords[version keywords] `[major]`, `[minor]`, and `[patch]` can be customized by overriding the plugin configuration.
+
+In this case, a `versionConfig.keywords` configuration block can be defined with required keywords.
+
+.Example configuration with keywords overriding
+[source,xml]
+----
+<plugin>
+    <groupId>com.github.manikmagar</groupId>
+    <artifactId>git-versioner-maven-plugin</artifactId>
+    <version>0.1.0</version>
+    <configuration>
+        <versionConfig>
+            <initial>
+                <major>1</major>
+                <minor>3</minor>
+                <patch>4</patch>
+            </initial>
+            <keywords>              // <1>
+                <majorKey>[BIG]</majorKey>
+                <minorKey>[SMALL]</minorKey>
+                <patchKey>[FIX]</patchKey>
+            </keywords>
+        </versionConfig>
+    </configuration>
+    <executions>
+        <execution>
+            <id>set-version</id>
+            <goals>
+                <goal>set</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+<1> Override one or all version keywords.
 
 == Can I access generated version properties?
 Yes, the plugin exposes a new goal called `properties` that can set calculated version components to maven properties.

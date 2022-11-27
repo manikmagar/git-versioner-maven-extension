@@ -2,7 +2,7 @@
 package com.github.manikmagar.maven.versioner.git;
 
 import com.github.manikmagar.maven.versioner.Version;
-import com.github.manikmagar.maven.versioner.VersionConfig;
+import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
 import com.github.manikmagar.maven.versioner.Versioner;
 import java.util.Collections;
 import java.util.List;
@@ -31,17 +31,18 @@ public class JGitVersioner implements Versioner {
 				if (head != null && head.getObjectId() != null) {
 					hash = head.getObjectId().getName();
 				}
-				var version = new Version(branch, hash);
+				var version = new Version(branch, hash, versionConfig.getInitial().getMajor(),
+						versionConfig.getInitial().getMinor(), versionConfig.getInitial().getPatch());
 				var commits = git.log().call();
 				List<RevCommit> revCommits = StreamSupport.stream(commits.spliterator(), false)
 						.collect(Collectors.toList());
 				Collections.reverse(revCommits);
 				for (RevCommit commit : revCommits) {
-					if (commit.getFullMessage().contains(versionConfig.getMajorKey())) {
+					if (commit.getFullMessage().contains(versionConfig.getKeywords().getMajorKey())) {
 						version.incrementMajor();
-					} else if (commit.getFullMessage().contains(versionConfig.getMinorKey())) {
+					} else if (commit.getFullMessage().contains(versionConfig.getKeywords().getMinorKey())) {
 						version.incrementMinor();
-					} else if (commit.getFullMessage().contains(versionConfig.getPatchKey())) {
+					} else if (commit.getFullMessage().contains(versionConfig.getKeywords().getPatchKey())) {
 						version.incrementPatch();
 					} else {
 						version.incrementCommit();

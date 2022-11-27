@@ -4,12 +4,9 @@ package com.github.manikmagar.maven.versioner.mojo;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 import com.github.manikmagar.maven.versioner.Version;
-import com.github.manikmagar.maven.versioner.VersionConfig;
-import com.github.manikmagar.maven.versioner.git.JGitVersioner;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -29,8 +26,8 @@ public class Set extends AbstractVersionerMojo {
 	private BuildPluginManager pluginManager;
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		Version version = new JGitVersioner(new VersionConfig()).version();
+	public void execute() throws MojoExecutionException {
+		Version version = getVersioner().version();
 		if (version.getHash().isEmpty()) {
 			getLog().warn(String.format("No HEAD ref found on branch %s.", version.getBranch()));
 		}
