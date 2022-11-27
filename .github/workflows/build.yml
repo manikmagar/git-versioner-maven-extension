@@ -31,8 +31,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: Test Results (os - ${{ matrix.os }})
-          path: ./build/test-results/test/*.xml
+          name: artifacts
+          path: ./target/surefire-reports/*.xml
   publish-test-results:
     name: "Publish Tests Results"
     needs: build
