@@ -1,0 +1,53 @@
+name: tag-and-release
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'zulu'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Release
+    env:
+      JRELEASER_TWITTER_CONSUMER_KEY: ${{ secrets.JRELEASER_TWITTER_CONSUMER_KEY }}
+      JRELEASER_TWITTER_CONSUMER_SECRET: ${{ secrets.JRELEASER_TWITTER_CONSUMER_SECRET }}
+      JRELEASER_TWITTER_ACCESS_TOKEN: ${{ secrets.JRELEASER_TWITTER_ACCESS_TOKEN }}
+      JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.JRELEASER_TWITTER_ACCESS_TOKEN_SECRET }}
+      JRELEASER_MASTODON_ACCESS_TOKEN: ${{ secrets.JRELEASER_MASTODON_ACCESS_TOKEN }}
+      JRELEASER_GITHUB_TOKEN: ${{ secrets.JRELEASER_GITHUB_TOKEN }}
+      JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+      JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+      JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+      JRELEASER_NEXUS2_MAVEN_CENTRAL_PASSWORD: ${{ secrets.JRELEASER_NEXUS2_MAVEN_CENTRAL_PASSWORD }}
+      JRELEASER_NEXUS2_USERNAME: ${{ secrets.JRELEASER_NEXUS2_USERNAME }}
+      JRELEASER_VERSION: 1.3.1
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: maven
+      - name: Install LATEST
+        run: ./mvnw install
+      - name: Set Version
+        run: ./mvnw validate -Pgit-versioner
+      - name: Stage Deploy
+        run: ./mvnw deploy -Pdeploy -DskipTests
+      - name: Run JReleaser Deploy
+        run: ./mvnw jreleaser:full-release -Pdeploy
+      - name: JReleaser release output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jreleaser-release
+          path: |
+            target/jreleaser/trace.log
+            target/jreleaser/output.properties

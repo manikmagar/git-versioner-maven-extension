@@ -399,7 +399,7 @@
       </build>
       <distributionManagement>
         <repository>
-          <id>local</id>
+          <id>build-stage</id>
           <layout>default</layout>
           <url>file://${project.build.directory}/staging-deploy</url>
         </repository>
