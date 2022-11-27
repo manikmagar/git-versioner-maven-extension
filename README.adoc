@@ -1,4 +1,95 @@
 = Git Versioner Maven Plugin
 
-Generate the semver version using the git commit history.
+Generate the semver version using the git commit history and automatically set it to maven pom.
 
+No more manually modifying the pom.xml to decide on the versions.
+You continue developing and adding commits to your project.
+When it is time to release, add a commit with a message containing
+a specific version keyword and watch the magic happen.
+
+== How does it work?
+This plugin will look at all the commit history and compute the version number upto current commit.
+
+== What are version keywords?
+Version keywords are the reserved words that will define which milestone of the release is this.
+
+Plugin supports following keywords -
+
+- `[major]` - A Major version milestone Eg. 1.0.0 -> 2.0.0
+- `[minor]` - A Minor version milestone Eg. 1.1.0 -> 1.2.0
+- `[patch]` - A Patch version milestone Eg. 1.1.1 -> 1.1.2
+
+== How to configure?
+It is as simple as adding following configuration to your project's pom.xml -
+
+[source, xml]
+----
+<plugin>
+    <groupId>com.github.manikmagar</groupId>
+    <artifactId>git-versioner-maven-plugin</artifactId>
+    <version>${git-versioner-maven-plugin.version}</version> // <1>
+    <executions>
+        <execution> // <2>
+            <id>set-version</id>
+            <goals>
+                <goal>set</goal>
+            </goals>
+        </execution>
+        <execution> // <3>
+            <id>print-version</id>
+            <goals>
+                <goal>print</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+<1> Use the latest release version of this plugin.
+<2> Add an execution for `set` goal. By default, it will be bound to maven _INITIALIZE_ phase.
+<3> Optional. If you would like to print version details during _VALIDATE_ phase.
+
+== How do I increment version?
+Now that you have plugin configured, you can continue with your regular development.
+
+When it is time to increment version, you can add commits (preferably empty) with appropriate version keywords.
+
+[source, shell]
+----
+git commit --allow-empty -m "chore: [<keyword>] release" // <1>
+----
+
+<1> where `<keyword>` can be one of these - major, minor, or patch.
+
+== Can I access generated version properties?
+Yes, the plugin exposes a new goal called `properties` that can set calculated version components to maven properties.
+
+If you have added the plugin to your pom.xml, you can run `git-versioner:properties` goal to set those properties.
+
+.Example display properties without git-versioner:properties
+[source, shell]
+----
+$ mvn help:evaluate -Dexpression=project.properties -q -DforceStdout
+[INFO] [stdout] <properties>
+[INFO] [stdout]   <maven.compiler.source>11</maven.compiler.source>
+[INFO] [stdout]   <maven.compiler.target>11</maven.compiler.target>
+[INFO] [stdout] </properties>
+----
+
+.Example displaying properties with git-versioner:properties
+[source,shell]
+----
+$ mvn git-versioner:properties help:evaluate -Dexpression=project.properties -q -DforceStdout
+[INFO] [stdout] <properties>
+[INFO] [stdout]   <git-versioner.commitNumber>0</git-versioner.commitNumber>
+[INFO] [stdout]   <git-versioner.major>0</git-versioner.major>
+[INFO] [stdout]   <git-versioner.minor>0</git-versioner.minor>
+[INFO] [stdout]   <git-versioner.patch>1</git-versioner.patch>
+[INFO] [stdout]   <git-versioner.semver>0.0.1</git-versioner.semver>
+[INFO] [stdout]   <maven.compiler.source>11</maven.compiler.source>
+[INFO] [stdout]   <maven.compiler.target>11</maven.compiler.target>
+[INFO] [stdout] </properties>
+----
+
+== Acknowledgement
+This is inspired from Gradle plugin https://github.com/toolebox-io/gradle-git-versioner[toolebox-io/gradle-git-versioner] that I have been using for my Gradle projects. This maven plugin is my attempt to get those auto-version capabilities into my Maven builds.
