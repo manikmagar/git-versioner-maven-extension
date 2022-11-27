@@ -72,9 +72,9 @@ deploy:
 
 announce:
   twitter:
-    active: RELEASE
+    active: release
     status: '🚀 {{projectName}} {{projectVersion}} has been released! {{releaseNotesUrl}}'
   mastodon:
-    active: RELEASE
-    host: fosstodon.org
+    active: release
+    host: https://fosstodon.org
     status: '🚀 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}'
