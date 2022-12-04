@@ -1,4 +1,17 @@
 = Git Versioner Maven Plugin
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+:toc: macro
+
+image:https://img.shields.io/github/release/manikmagar/git-versioner-maven-plugin.svg[Release,link=https://github.com/manikmagar/git-versioner-maven-plugin/releases]
+image:https://github.com/manikmagar/git-versioner-maven-plugin/workflows/build/badge.svg[Build Status,link=https://github.com/manikmagar/git-versioner-maven-plugin/actions]
+image:https://img.shields.io/github/license/manikmagar/git-versioner-maven-plugin[GitHub]
 
 Generate the semver version using the git commit history and automatically set it to maven pom.
 
@@ -6,6 +19,8 @@ No more manually modifying the pom.xml to decide on the versions.
 You continue developing and adding commits to your project.
 When it is time to release, add a commit with a message containing
 a specific version keyword and watch the magic happen.
+
+toc::[]
 
 == How does it work?
 This plugin will look at all the commit history and compute the version number upto current commit.
