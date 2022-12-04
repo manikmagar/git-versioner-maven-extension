@@ -1,5 +1,6 @@
 package com.github.manikmagar.maven.versioner.mojo;
 
+import com.github.manikmagar.maven.versioner.Version;
 import com.github.manikmagar.maven.versioner.Versioner;
 import com.github.manikmagar.maven.versioner.git.JGitVersioner;
 import com.github.manikmagar.maven.versioner.mojo.params.InitialVersion;
@@ -49,5 +50,10 @@ public class AbstractVersionerMojoTest {
 	public void getVersioner() {
 		Versioner versioner = testMojo.getVersioner();
 		assertThat(versioner).isNotNull().isInstanceOf(JGitVersioner.class);
+	}
+
+	@Test
+	public void replaceVersionToken() {
+		assertThat(testMojo.replaceTokens("v%v", new Version("test", "testHash", 1, 2, 3))).isEqualTo("v1.2.3");
 	}
 }

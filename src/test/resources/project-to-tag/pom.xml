@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.manikmagar</groupId>
+  <artifactId>versioner-maven-plugin-test</artifactId>
+  <version>0.0.0</version>
+  <packaging>jar</packaging>
+  <name>Test MyMojo</name>
+
+    <properties>
+        <tag.namePattern>version-%v</tag.namePattern>
+        <tag.messagePattern>Release message %v</tag.messagePattern>
+        <tag.failWhenTagExist>false</tag.failWhenTagExist>
+    </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.manikmagar</groupId>
+        <artifactId>git-versioner-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>tag</id>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <failWhenTagExist>true</failWhenTagExist>
+              <tagNamePattern>v%v</tagNamePattern>
+              <tagMessagePattern>Release version %v</tagMessagePattern>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

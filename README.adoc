@@ -169,5 +169,36 @@ $ mvn git-versioner:properties help:evaluate -Dexpression=project.properties -q 
 [INFO] [stdout] </properties>
 ----
 
+== How to create Git tags?
+You can use `git-versioner:tag` goal to create a git tag for current version in local git repository.
+
+NOTE: This does not push tag to remote repository.
+
+.Git Tag Goal with default configuration parameters
+[source, xml]
+----
+<plugin>
+    <groupId>com.github.manikmagar</groupId>
+    <artifactId>git-versioner-maven-plugin</artifactId>
+    <executions>
+      <execution>
+        <id>tag</id>
+        <goals>
+          <goal>tag</goal>
+        </goals>
+        <configuration>
+          <failWhenTagExist>true</failWhenTagExist> // <1>
+          <tagNamePattern>v%v</tagNamePattern>  // <2>
+          <tagMessagePattern>Release version %v</tagMessagePattern> // <3>
+        </configuration>
+      </execution>
+    </executions>
+</plugin>
+----
+
+<1> If set to not fail, it will just log warning and skip tag creation.
+<2> Tag name pattern to use. Default `v%v` will result in tags like `v1.2.3`.
+<3> Tag message pattern to use. Default `Release version %v` will add tag message like `Release version 1.2.3`.
+
 == Acknowledgement
 This is inspired from Gradle plugin https://github.com/toolebox-io/gradle-git-versioner[toolebox-io/gradle-git-versioner] that I have been using for my Gradle projects. This maven plugin is my attempt to get those auto-version capabilities into my Maven builds.
