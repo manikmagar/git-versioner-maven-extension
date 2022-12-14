@@ -1,7 +1,7 @@
 package com.github.manikmagar.maven.versioner.mojo;
 
-import com.github.manikmagar.maven.versioner.Version;
-import com.github.manikmagar.maven.versioner.Versioner;
+import com.github.manikmagar.maven.versioner.version.SemVerStrategy;
+import com.github.manikmagar.maven.versioner.version.Versioner;
 import com.github.manikmagar.maven.versioner.git.JGitVersioner;
 import com.github.manikmagar.maven.versioner.mojo.params.InitialVersion;
 import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
@@ -54,6 +54,6 @@ public class AbstractVersionerMojoTest {
 
 	@Test
 	public void replaceVersionToken() {
-		assertThat(testMojo.replaceTokens("v%v", new Version("test", "testHash", 1, 2, 3))).isEqualTo("v1.2.3");
+		assertThat(testMojo.replaceTokens("v%v", new SemVerStrategy(1, 2, 3, "test", "testHash"))).isEqualTo("v1.2.3");
 	}
 }

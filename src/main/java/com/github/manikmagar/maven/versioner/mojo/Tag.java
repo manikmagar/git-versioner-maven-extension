@@ -53,11 +53,11 @@ public class Tag extends AbstractVersionerMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		var version = getVersioner().version();
-		var tagName = replaceTokens(getTagNamePattern(), version);
-		var tagMessage = replaceTokens(getTagMessagePattern(), version);
-		getLog().info("Current version: " + version.toString());
-		getLog().info(String.format("Tag version '%s' with message '%s'", tagName, tagMessage));
+		var versionStrategy = getVersioner().version();
+		var tagName = replaceTokens(getTagNamePattern(), versionStrategy);
+		var tagMessage = replaceTokens(getTagMessagePattern(), versionStrategy);
+		getLog().info("Current Version: " + versionStrategy.toVersionString());
+		getLog().info(String.format("Tag Version '%s' with message '%s'", tagName, tagMessage));
 		if (GitTag.exists(tagName)) {
 			getLog().error(String.format("Tag already exist: %s", tagName));
 			if (isFailWhenTagExist())

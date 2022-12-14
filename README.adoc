@@ -25,6 +25,9 @@ toc::[]
 == How does it work?
 This plugin will look at all the commit history and compute the version number upto current commit.
 
+This plugin supports generating Semantic Versions `x.y.z` format. When additional commits exist after the patch,
+Git short hash for the latest commit is added as a build metadata - `x.y.z+shortHash`.
+
 [#versionKeywords]
 == What are version keywords?
 Version keywords are the reserved words that will define which milestone of the release is this.

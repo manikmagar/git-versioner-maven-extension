@@ -1,8 +1,7 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner.git;
 
-import com.github.manikmagar.maven.versioner.Version;
-import com.github.manikmagar.maven.versioner.Versioner;
+import com.github.manikmagar.maven.versioner.version.*;
 import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -20,7 +19,7 @@ public class JGitVersioner implements Versioner {
 		this.versionConfig = versionConfig;
 	}
 
-	public Version version() {
+	public VersionStrategy version() {
 		return JGit.executeOperation(git -> {
 			var branch = git.getRepository().getBranch();
 			Ref head = git.getRepository().findRef("HEAD");
@@ -28,24 +27,24 @@ public class JGitVersioner implements Versioner {
 			if (head != null && head.getObjectId() != null) {
 				hash = head.getObjectId().getName();
 			}
-			var version = new Version(branch, hash, versionConfig.getInitial().getMajor(),
-					versionConfig.getInitial().getMinor(), versionConfig.getInitial().getPatch());
+			var versionStrategy = new SemVerStrategy(versionConfig.getInitial().getMajor(),
+					versionConfig.getInitial().getMinor(), versionConfig.getInitial().getPatch(), branch, hash);
 			var commits = git.log().call();
 			List<RevCommit> revCommits = StreamSupport.stream(commits.spliterator(), false)
 					.collect(Collectors.toList());
 			Collections.reverse(revCommits);
 			for (RevCommit commit : revCommits) {
 				if (commit.getFullMessage().contains(versionConfig.getKeywords().getMajorKey())) {
-					version.incrementMajor();
+					versionStrategy.increment(VersionComponentType.MAJOR, hash);
 				} else if (commit.getFullMessage().contains(versionConfig.getKeywords().getMinorKey())) {
-					version.incrementMinor();
+					versionStrategy.increment(VersionComponentType.MINOR, hash);
 				} else if (commit.getFullMessage().contains(versionConfig.getKeywords().getPatchKey())) {
-					version.incrementPatch();
+					versionStrategy.increment(VersionComponentType.PATCH, hash);
 				} else {
-					version.incrementCommit();
+					versionStrategy.increment(VersionComponentType.COMMIT, hash);
 				}
 			}
-			return version;
+			return versionStrategy;
 		});
 	}
 }
