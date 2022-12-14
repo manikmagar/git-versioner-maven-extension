@@ -1,8 +1,8 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner.mojo;
 
-import com.github.manikmagar.maven.versioner.Version;
-import com.github.manikmagar.maven.versioner.Versioner;
+import com.github.manikmagar.maven.versioner.version.VersionStrategy;
+import com.github.manikmagar.maven.versioner.version.Versioner;
 import com.github.manikmagar.maven.versioner.git.JGitVersioner;
 import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
 import org.apache.maven.plugin.AbstractMojo;
@@ -35,7 +35,7 @@ public abstract class AbstractVersionerMojo extends AbstractMojo {
 		return new JGitVersioner(getVersionConfig());
 	}
 
-	protected String replaceTokens(String pattern, Version version) {
-		return pattern.replace("%v", version.toSemver());
+	protected String replaceTokens(String pattern, VersionStrategy versionStrategy) {
+		return pattern.replace("%v", versionStrategy.toVersionString());
 	}
 }

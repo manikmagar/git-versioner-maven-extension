@@ -3,7 +3,7 @@ package com.github.manikmagar.maven.versioner.mojo;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
-import com.github.manikmagar.maven.versioner.Version;
+import com.github.manikmagar.maven.versioner.version.VersionStrategy;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,12 +27,12 @@ public class Set extends AbstractVersionerMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
-		Version version = getVersioner().version();
+		VersionStrategy version = getVersioner().version();
 		if (version.getHash().isEmpty()) {
-			getLog().warn(String.format("No HEAD ref found on branch %s.", version.getBranch()));
+			getLog().warn(String.format("No HEAD ref found on branch %s.", version.getBranchName()));
 		}
 		executeMojo(plugin(groupId("org.codehaus.mojo"), artifactId("versions-maven-plugin"), version("2.13.0")),
-				goal("set"), configuration(element(name("newVersion"), version.toSemver())),
+				goal("set"), configuration(element(name("newVersion"), version.toVersionString())),
 				executionEnvironment(mavenProject, mavenSession, pluginManager));
 		executeMojo(plugin(groupId("org.codehaus.mojo"), artifactId("versions-maven-plugin"), version("2.13.0")),
 				goal("commit"), configuration(), executionEnvironment(mavenProject, mavenSession, pluginManager));

@@ -23,6 +23,17 @@ public class PrintTest {
 			messages.add(message);
 		}
 
+		@Override
+		public boolean isInfoEnabled() {
+			return true;
+		}
+
+		@Override
+		public void info(CharSequence content) {
+			super.info(content);
+			messages.add(content.toString());
+		}
+
 		public List<String> getMessages() {
 			return messages;
 		}
@@ -53,7 +64,6 @@ public class PrintTest {
 		printVersionMojo.setLog(testLog);
 		assertThat(printVersionMojo).isNotNull();
 		printVersionMojo.execute();
-		assertThat(testLog.getMessages())
-				.allMatch(s -> s.startsWith("com.github.manikmagar.maven.versioner.Version [branch:"));
+		assertThat(testLog.getMessages()).isNotEmpty().allMatch(s -> s.startsWith("SemVerStrategy [branch:"));
 	}
 }
