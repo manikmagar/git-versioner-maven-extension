@@ -1,13 +1,14 @@
 package com.github.manikmagar.maven.versioner.mojo;
 
-import com.github.manikmagar.maven.versioner.version.SemVerStrategy;
-import com.github.manikmagar.maven.versioner.version.Versioner;
-import com.github.manikmagar.maven.versioner.git.JGitVersioner;
-import com.github.manikmagar.maven.versioner.mojo.params.InitialVersion;
-import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Test;
+
+import com.github.manikmagar.maven.versioner.git.JGitVersioner;
+import com.github.manikmagar.maven.versioner.mojo.params.InitialVersion;
+import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
+import com.github.manikmagar.maven.versioner.version.SemVerStrategy;
+import com.github.manikmagar.maven.versioner.version.Versioner;
 
 import static com.github.manikmagar.maven.versioner.mojo.params.VersionKeywords.*;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,9 +1,10 @@
 package com.github.manikmagar.maven.versioner.mojo.params;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 import static com.github.manikmagar.maven.versioner.mojo.params.VersionKeywords.*;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -39,8 +39,62 @@ Plugin supports following keywords -
 - `[patch]` - A Patch version milestone Eg. 1.1.1 -> 1.1.2
 
 == How to configure?
-It is as simple as adding following configuration to your project's pom.xml -
+This can be used as a Maven Build extension or as a regular maven plugin.
 
+
+=== Using as Maven Build Extension
+.**Since v0.4.0**
+
+
+When used as a maven build extension:
+
+- Participates in maven build lifecycle
+- Automatically sets the building project's version
+- No explicit mojo executions needed to set the version
+- Project's POM remain unchanged
+
+To use as a maven build extension,
+
+Create (or modify) `extensions.xml` file in `${project.baseDir}/.mvn/`
+to have the following entry -
+
+..mvn/extensions.xml
+[source,xml]
+----
+<extensions xmlns="http://maven.apache.org/EXTENSIONS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/EXTENSIONS/1.0.0 https://maven.apache.org/xsd/core-extensions-1.0.0.xsd">
+    <extension>
+        <groupId>com.github.manikmagar</groupId>
+        <artifactId>git-versioner-maven-plugin</artifactId>
+        <version>${latest-version-here}</version>
+    </extension>
+
+</extensions>
+----
+See an example test project at link:src/test/resources/mockito-extensions[].
+
+With just that configuration, next time your project runs any maven goals, you should see version from this module.
+Try running `mvn package` on your project.
+
+WARNING: Extensions approach does not support setting the initial version and will start counting from 0.0.0.
+
+=== Using as Maven Plugin
+.**Since 0.1.0**
+
+When used as a regular maven plugin:
+
+- Project's POM needs to be configured with this plugin
+- Plugin configurations can be used to customize the version behavior
+- Requires a separate invocation of `git-version:set` or `initialize` goal
+- Updates the project POM with calculated version
+
+*Limitations:*
+
+- Can not change the project version in ongoing execution
+
+To use as a Maven plugin, add following configuration to your project's pom.xml -
+
+.Maven Plugin configuration
 [source, xml]
 ----
 <plugin>

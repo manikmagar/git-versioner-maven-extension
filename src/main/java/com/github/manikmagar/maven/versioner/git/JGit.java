@@ -1,9 +1,10 @@
 package com.github.manikmagar.maven.versioner.git;
 
-import com.github.manikmagar.maven.versioner.GitVersionerException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+
+import com.github.manikmagar.maven.versioner.GitVersionerException;
 
 public class JGit {
 

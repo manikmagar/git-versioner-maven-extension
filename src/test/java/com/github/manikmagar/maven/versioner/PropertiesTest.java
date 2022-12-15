@@ -1,39 +1,15 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.github.manikmagar.maven.versioner.mojo.Properties;
 import java.io.File;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.testing.MojoRule;
-import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
-import org.junit.Rule;
+
 import org.junit.Test;
 
-public class PropertiesTest {
+import com.github.manikmagar.maven.versioner.mojo.Properties;
 
-	private MavenSession mavenSession;
+import static org.assertj.core.api.Assertions.assertThat;
 
-	@Rule
-	public MojoRule rule = new MojoRule() {
-		@Override
-		protected void before() throws Throwable {
-		}
-
-		@Override
-		protected void after() {
-		}
-
-		@Override
-		public Mojo lookupConfiguredMojo(MavenSession session, MojoExecution execution)
-				throws Exception, ComponentConfigurationException {
-			mavenSession = session;
-			return super.lookupConfiguredMojo(session, execution);
-		}
-	};
+public class PropertiesTest extends AbstractMojoTest {
 
 	/**
 	 * @throws Exception

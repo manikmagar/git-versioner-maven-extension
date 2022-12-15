@@ -1,30 +1,19 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.github.manikmagar.maven.versioner.mojo.Set;
 import java.io.File;
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Rule;
+
 import org.junit.Test;
 import org.mockito.Answers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
-public class SetTest {
+import com.github.manikmagar.maven.versioner.mojo.Set;
 
-	@Rule
-	public MojoRule rule = new MojoRule() {
-		@Override
-		protected void before() throws Throwable {
-		}
+import static org.assertj.core.api.Assertions.assertThat;
 
-		@Override
-		protected void after() {
-		}
-	};
+public class SetTest extends AbstractMojoTest {
 
 	/**
 	 * @throws Exception

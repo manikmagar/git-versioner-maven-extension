@@ -1,13 +1,12 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner.mojo;
 
-import com.github.manikmagar.maven.versioner.version.VersionStrategy;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
+
+import com.github.manikmagar.maven.versioner.version.VersionStrategy;
 
 /**
  * <pre>
@@ -22,10 +21,6 @@ import org.apache.maven.project.MavenProject;
  */
 @Mojo(name = "properties", defaultPhase = LifecyclePhase.VALIDATE)
 public class Properties extends AbstractVersionerMojo {
-
-	/** The project currently being build. */
-	@Parameter(defaultValue = "${project}", readonly = true)
-	private MavenProject mavenProject;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {

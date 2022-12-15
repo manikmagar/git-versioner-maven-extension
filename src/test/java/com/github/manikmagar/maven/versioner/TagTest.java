@@ -1,27 +1,15 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner;
 
-import com.github.manikmagar.maven.versioner.mojo.Tag;
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Rule;
+import java.io.File;
+
 import org.junit.Test;
 
-import java.io.File;
+import com.github.manikmagar.maven.versioner.mojo.Tag;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TagTest {
-
-	@Rule
-	public MojoRule rule = new MojoRule() {
-		@Override
-		protected void before() throws Throwable {
-		}
-
-		@Override
-		protected void after() {
-		}
-	};
+public class TagTest extends AbstractMojoTest {
 
 	/**
 	 * @throws Exception

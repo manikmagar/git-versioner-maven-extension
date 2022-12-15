@@ -1,9 +1,10 @@
 package com.github.manikmagar.maven.versioner.mojo.params;
 
-import com.github.manikmagar.maven.versioner.Util;
+import java.util.Objects;
+
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.util.Objects;
+import com.github.manikmagar.maven.versioner.Util;
 
 /**
  * Defines the initial values for version components in SemVer -

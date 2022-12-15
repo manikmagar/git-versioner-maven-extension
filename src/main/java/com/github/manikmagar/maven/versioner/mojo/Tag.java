@@ -1,11 +1,12 @@
 package com.github.manikmagar.maven.versioner.mojo;
 
-import com.github.manikmagar.maven.versioner.GitVersionerException;
-import com.github.manikmagar.maven.versioner.git.GitTag;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import com.github.manikmagar.maven.versioner.GitVersionerException;
+import com.github.manikmagar.maven.versioner.git.GitTag;
 
 /**
  * Create a local git tag with current version.

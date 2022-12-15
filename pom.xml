@@ -5,7 +5,7 @@
 
   <groupId>com.github.manikmagar</groupId>
   <artifactId>git-versioner-maven-plugin</artifactId>
-  <version>V-LATEST</version>
+  <version>V-LATEST-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Git Versioner Maven Plugin</name>
@@ -22,8 +22,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <maven.version>3.3.9</maven.version>
-    <project.github.repository>manikmagar/maven-sample-app</project.github.repository>
+    <maven.version>3.8.6</maven.version>
+    <project.github.repository>manikmagar/git-versioner-maven-plugin</project.github.repository>
     <nexus.url>https://oss.sonatype.org</nexus.url>
     <repository.url>git@github.com:${project.github.repository}.git</repository.url>
   </properties>
@@ -120,6 +120,21 @@
           <artifactId>maven-invoker-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
+        <plugin>
+          <groupId>net.revelc.code</groupId>
+          <artifactId>impsort-maven-plugin</artifactId>
+          <version>1.6.2</version>
+          <configuration>
+            <groups>java.,javax.,org.,com.</groups>
+            <removeUnused>true</removeUnused>
+            <staticAfter>true</staticAfter>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>3.0.0-M7</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -204,6 +219,19 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>net.revelc.code</groupId>
+        <artifactId>impsort-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sort-imports</id>
+            <goals>
+              <goal>sort</goal>
+            </goals>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -211,7 +239,7 @@
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
-      <version>6.3.0.202209071007-r</version>
+      <version>6.4.0.202211300538-r</version>
     </dependency>
     <dependency>
       <groupId>org.twdata.maven</groupId>
@@ -278,6 +306,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-verifier</artifactId>
+      <version>1.8.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.github.bsideup.jabel</groupId>
       <artifactId>jabel-javac-plugin</artifactId>
       <version>1.0.0</version>
@@ -339,22 +373,27 @@
             <version>3.1.0</version>
             <configuration>
               <debug>false</debug>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
-              <postBuildHookScript>verify</postBuildHookScript>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <goals>
-                <goal>git-versioner:set</goal>
-              </goals>
             </configuration>
             <executions>
               <execution>
                 <id>integration-test</id>
                 <goals>
                   <goal>install</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
                   <goal>integration-test</goal>
                   <goal>verify</goal>
                 </goals>
