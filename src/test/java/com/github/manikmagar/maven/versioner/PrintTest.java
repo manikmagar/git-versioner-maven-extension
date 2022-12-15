@@ -1,18 +1,18 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.github.manikmagar.maven.versioner.mojo.Print;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.maven.plugin.testing.MojoRule;
+
 import org.apache.maven.plugin.testing.SilentLog;
-import org.junit.Rule;
 import org.junit.Test;
 
-public class PrintTest {
+import com.github.manikmagar.maven.versioner.mojo.Print;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class PrintTest extends AbstractMojoTest {
 
 	public static class TestLog extends SilentLog {
 		List<String> messages = new ArrayList<>();
@@ -38,17 +38,6 @@ public class PrintTest {
 			return messages;
 		}
 	}
-
-	@Rule
-	public MojoRule rule = new MojoRule() {
-		@Override
-		protected void before() throws Throwable {
-		}
-
-		@Override
-		protected void after() {
-		}
-	};
 
 	/**
 	 * @throws Exception

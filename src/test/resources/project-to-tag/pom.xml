@@ -21,6 +21,7 @@
       <plugin>
         <groupId>com.github.manikmagar</groupId>
         <artifactId>git-versioner-maven-plugin</artifactId>
+        <version>V-LATEST</version>
         <executions>
           <execution>
             <id>tag</id>

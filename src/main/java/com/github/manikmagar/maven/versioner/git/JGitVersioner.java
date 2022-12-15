@@ -1,15 +1,16 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner.git;
 
-import com.github.manikmagar.maven.versioner.version.*;
-import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.revwalk.RevCommit;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevCommit;
+
+import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
+import com.github.manikmagar.maven.versioner.version.*;
 
 public class JGitVersioner implements Versioner {
 

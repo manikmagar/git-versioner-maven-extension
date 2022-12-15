@@ -1,9 +1,9 @@
 /* (C)2022 */
 package com.github.manikmagar.maven.versioner.mojo.params;
 
-import org.apache.maven.plugins.annotations.Parameter;
-
 import java.util.Objects;
+
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Define the version keywords to use when parsing git commit messages.

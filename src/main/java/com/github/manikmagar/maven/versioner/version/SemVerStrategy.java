@@ -1,9 +1,9 @@
 package com.github.manikmagar.maven.versioner.version;
 
-import com.github.manikmagar.semver4j.SemVer;
-
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.manikmagar.semver4j.SemVer;
 
 /**
  * Create Semantic version string
