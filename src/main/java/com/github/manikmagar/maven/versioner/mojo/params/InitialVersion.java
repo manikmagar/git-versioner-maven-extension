@@ -12,6 +12,10 @@ import com.github.manikmagar.maven.versioner.Util;
  */
 public final class InitialVersion {
 
+	public static final String GV_INITIAL_VERSION_MAJOR = "gv.initialVersion.major";
+	public static final String GV_INITIAL_VERSION_MINOR = "gv.initialVersion.minor";
+	public static final String GV_INITIAL_VERSION_PATCH = "gv.initialVersion.patch";
+
 	public InitialVersion(int major, int minor, int patch) {
 		this._major = major;
 		this._minor = minor;
@@ -25,17 +29,17 @@ public final class InitialVersion {
 	/**
 	 * Initial Major version.
 	 */
-	@Parameter(name = "major", defaultValue = "0")
+	@Parameter(name = "major", defaultValue = "0", property = GV_INITIAL_VERSION_MAJOR)
 	private int _major = 0;
 	/**
 	 * Initial Minor version.
 	 */
-	@Parameter(name = "minor", defaultValue = "0")
+	@Parameter(name = "minor", defaultValue = "0", property = GV_INITIAL_VERSION_MINOR)
 	private int _minor = 0;
 	/**
 	 * Initial Patch version.
 	 */
-	@Parameter(name = "patch", defaultValue = "0")
+	@Parameter(name = "patch", defaultValue = "0", property = GV_INITIAL_VERSION_PATCH)
 	private int _patch = 0;
 
 	public int getMajor() {

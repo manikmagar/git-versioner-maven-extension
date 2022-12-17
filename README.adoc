@@ -39,12 +39,14 @@ Plugin supports following keywords -
 - `[patch]` - A Patch version milestone Eg. 1.1.1 -> 1.1.2
 
 == How to configure?
-This can be used as a Maven Build extension or as a regular maven plugin.
+This can be used as a Maven Build extension or as a rgfa
+egular maven plugin.
 
+NOTE: It is **highly** recommended that you use this as *Maven Build Extension* for seamless version integration.
+See below for more details.
 
 === Using as Maven Build Extension
 .**Since v0.4.0**
-
 
 When used as a maven build extension:
 
@@ -75,8 +77,6 @@ See an example test project at link:src/test/resources/mockito-extensions[].
 
 With just that configuration, next time your project runs any maven goals, you should see version from this module.
 Try running `mvn package` on your project.
-
-WARNING: Extensions approach does not support setting the initial version and will start counting from 0.0.0.
 
 === Using as Maven Plugin
 .**Since 0.1.0**
@@ -124,14 +124,27 @@ To use as a Maven plugin, add following configuration to your project's pom.xml 
 
 == How to start with a different version?
 It is possible that your project is already released with a certain version.
-In that case, you can configure the initial version to start using this plugin.
+In that case, you can configure the initial version to start counting versions from.
 
-Assuming your application released version is v1.3.4. You can set a `versionConfig.initial` configuration block as below.
-In this case, the first version calculated by this plugin will be -
+Assuming your application released version is v1.3.4, when appropriate initial version is set, the first version calculated by this extension/plugin will be -
 
 - Major: *2.0.0*
 - Minor: 1.*4.0*
 - Patch: 1.3.*5*
+
+=== Using as Maven Build Extension
+When using as a build extension, you can add following properties to `.mvn/git-versioner-extension.properties` file -
+
+.Example configuration for initial version for extension mode
+[source,properties]
+----
+gv.initialVersion.major=1
+gv.initialVersion.minor=3
+gv.initialVersion.patch=4
+----
+
+=== Using as Maven Plugin
+You can set a `versionConfig.initial` configuration block as below -
 
 .Example configuration to start version from 1.3.4
 [source,xml]
@@ -173,7 +186,20 @@ git commit --allow-empty -m "chore: [<keyword>] release" // <1>
 <1> where `<keyword>` can be one of these - major, minor, or patch.
 
 == How to customize version keywords?
-The default link:#versionKeywords[version keywords] `[major]`, `[minor]`, and `[patch]` can be customized by overriding the plugin configuration.
+The default link:#versionKeywords[version keywords] `[major]`, `[minor]`, and `[patch]` can be customized by overriding the configuration.
+
+=== Using as Maven Build Extension
+When using as a build extension, you can add following properties to `.mvn/git-versioner-extension.properties` file -
+
+.Example configuration for initial version for extension mode
+[source,properties]
+----
+gv.keywords.majorKey=[BIG]
+gv.keywords.minorKey=[SMALL]
+gv.keywords.patchKey=[FIX]
+----
+
+=== Using as Maven Plugin
 
 In this case, a `versionConfig.keywords` configuration block can be defined with required keywords.
 
@@ -211,7 +237,17 @@ In this case, a `versionConfig.keywords` configuration block can be defined with
 
 <1> Override one or all version keywords.
 
-== Can I access generated version properties?
+== Maven Plugin-only features
+
+When used a maven plugin, few additional feature goals are available.
+Even if the extension is being used, you can still add a maven plugin entry to leverage following goals.
+
+WARNING: Maven Extension DOES NOT use configuration element from plugin, if exist.
+
+TIP: DO NOT combine using extension as well as maven plugin `set` goal. Extension mode is recommended for versioning.
+
+=== Can I access generated version properties?
+.[Plugin-only feature]
 Yes, the plugin exposes a new goal called `properties` that can set calculated version components to maven properties.
 
 If you have added the plugin to your pom.xml, you can run `git-versioner:properties` goal to set those properties.
@@ -241,7 +277,8 @@ $ mvn git-versioner:properties help:evaluate -Dexpression=project.properties -q 
 [INFO] [stdout] </properties>
 ----
 
-== How to create Git tags?
+=== How to create Git tags?
+.[Plugin-only feature]
 You can use `git-versioner:tag` goal to create a git tag for current version in local git repository.
 
 NOTE: This does not push tag to remote repository.

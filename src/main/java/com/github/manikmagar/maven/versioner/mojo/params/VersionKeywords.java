@@ -12,21 +12,24 @@ public final class VersionKeywords {
 	public static final String KEY_MAJOR = "[major]";
 	public static final String KEY_MINOR = "[minor]";
 	public static final String KEY_PATCH = "[patch]";
+	public static final String GV_KEYWORDS_MAJOR_KEY = "gv.keywords.majorKey";
+	public static final String GV_KEYWORDS_MINOR_KEY = "gv.keywords.minorKey";
+	public static final String GV_KEYWORDS_PATCH_KEY = "gv.keywords.patchKey";
 
 	/**
 	 * The keyword for calculating major version of the SemVer.
 	 */
-	@Parameter(name = "majorKey", defaultValue = KEY_MAJOR)
+	@Parameter(name = "majorKey", defaultValue = KEY_MAJOR, property = GV_KEYWORDS_MAJOR_KEY)
 	private String _majorKey = KEY_MAJOR;
 	/**
 	 * The keyword for calculating minor version of the SemVer.
 	 */
-	@Parameter(name = "minorKey", defaultValue = KEY_MINOR)
+	@Parameter(name = "minorKey", defaultValue = KEY_MINOR, property = GV_KEYWORDS_MINOR_KEY)
 	private String _minorKey = KEY_MINOR;
 	/**
 	 * The keyword for calculating patch version of the SemVer.
 	 */
-	@Parameter(name = "patchKey", defaultValue = KEY_PATCH)
+	@Parameter(name = "patchKey", defaultValue = KEY_PATCH, property = GV_KEYWORDS_PATCH_KEY)
 	private String _patchKey = KEY_PATCH;
 
 	public String getMajorKey() {
