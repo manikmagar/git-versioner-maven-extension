@@ -60,6 +60,8 @@ To use as a maven build extension,
 Create (or modify) `extensions.xml` file in `${project.baseDir}/.mvn/`
 to have the following entry -
 
+NOTE: The artifact id is *git-versioner-maven-_extension_*.
+
 ..mvn/extensions.xml
 [source,xml]
 ----
@@ -67,13 +69,14 @@ to have the following entry -
             xsi:schemaLocation="http://maven.apache.org/EXTENSIONS/1.0.0 https://maven.apache.org/xsd/core-extensions-1.0.0.xsd">
     <extension>
         <groupId>com.github.manikmagar</groupId>
-        <artifactId>git-versioner-maven-plugin</artifactId>
+        <artifactId>git-versioner-maven-extension</artifactId>
         <version>${latest-version-here}</version>
     </extension>
 
 </extensions>
 ----
-See an example test project at link:src/test/resources/mockito-extensions[].
+
+See an example test project at link:git-versioner-maven-extension/src/test/resources/project-with-extension/[].
 
 With just that configuration, next time your project runs any maven goals, you should see version from this module.
 Try running `mvn package` on your project.
@@ -93,6 +96,8 @@ When used as a regular maven plugin:
 - Can not change the project version in ongoing execution
 
 To use as a Maven plugin, add following configuration to your project's pom.xml -
+
+NOTE: The artifact id is *git-versioner-maven-_plugin_*.
 
 .Maven Plugin configuration
 [source, xml]
