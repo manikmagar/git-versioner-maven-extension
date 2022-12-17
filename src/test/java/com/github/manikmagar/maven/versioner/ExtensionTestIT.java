@@ -7,14 +7,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.Verifier;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
@@ -31,15 +29,16 @@ public class ExtensionTestIT extends AbstractMojoTest {
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-	@BeforeClass
-	public static void bigHousekeeping() {
-		System.out.println("IT Log files will be available in target/it-logs/");
-	}
 	@Before
 	public void housekeeping() {
 		// IT tests do not print to standard maven logs
 		// It may look like process is stuck until all tests are executed in background.
 		System.out.print(".");
+	}
+	@AfterClass
+	public static void cleanHousekeeping() {
+		System.out.println(".");
+		System.out.println("IT Log files are available in target/it-logs/");
 	}
 
 	@Test
@@ -133,6 +132,24 @@ public class ExtensionTestIT extends AbstractMojoTest {
 			verifier.verifyErrorFreeLog();
 			String expectedVersion = "1.3.5+" + hash.substring(0, 7);
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+		}
+	}
+	@Test
+	public void extensionWithModule() throws Exception {
+		File tempProject = temporaryFolder.newFolder("test").toPath().toFile();
+		FileUtils.copyDirectory(Paths.get("src/test/resources/multi-module-project").toFile(), tempProject);
+		try (Git git = getMain(tempProject)) {
+			addEmptyCommit(git);
+			addCommit(git, "[patch]");
+			Verifier verifier = new Verifier(tempProject.getAbsolutePath(), true);
+			verifier.displayStreamBuffers();
+			verifier.executeGoal("verify");
+			copyExecutionLog(tempProject, verifier, "extensionWithModule.log.txt");
+			verifier.verifyErrorFreeLog();
+			String expectedVersion = "0.0.1";
+			verifier.verifyTextInLog("Building multi-module-parent " + expectedVersion);
+			verifier.verifyTextInLog("Building cli " + expectedVersion);
+			verifier.verifyTextInLog("Building lib " + expectedVersion);
 		}
 	}
 
