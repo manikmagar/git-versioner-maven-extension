@@ -7,22 +7,29 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.maven.building.Source;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.building.DefaultModelProcessor;
 import org.apache.maven.model.building.ModelProcessor;
 import org.eclipse.sisu.Typed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.manikmagar.maven.versioner.git.JGitVersioner;
 import com.github.manikmagar.maven.versioner.mojo.params.InitialVersion;
 import com.github.manikmagar.maven.versioner.mojo.params.VersionConfig;
 import com.github.manikmagar.maven.versioner.mojo.params.VersionKeywords;
+import com.github.manikmagar.maven.versioner.version.VersionStrategy;
 
 /**
  * Maven @{@link ModelProcessor} implementation to set the project version
@@ -33,9 +40,14 @@ import com.github.manikmagar.maven.versioner.mojo.params.VersionKeywords;
 @Typed(ModelProcessor.class)
 public class GitVersionerModelProcessor extends DefaultModelProcessor {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(GitVersionerModelProcessor.class);
+
 	public static final String GIT_VERSIONER_EXTENSIONS_PROPERTIES = "git-versioner.extensions.properties";
 	public static final String DOT_MVN = ".mvn";
 	private boolean initialized = false;
+
+	private final List<Path> relatedPoms = new ArrayList<>();
+	private VersionStrategy versionStrategy;
 
 	@Override
 	public Model read(File input, Map<String, ?> options) throws IOException {
@@ -66,29 +78,40 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		// The first execution is with the project's pom though.
 		// Use first initialized flag to avoid processing other classpath poms.
 		if (!initialized) {
-			// TODO: Define extension configuration model.
-			var versioner = new JGitVersioner(loadConfig());
-			var newVersion = versioner.version().toVersionString();
-			projectModel.setVersion(newVersion);
+			versionStrategy = new JGitVersioner(loadConfig()).version();
+			projectModel.setVersion(versionStrategy.toVersionString());
+			findRelatedProjects(projectModel);
 			initialized = true;
 		}
+		processRelatedProjects(projectModel);
 		return projectModel;
+	}
+
+	private void processRelatedProjects(Model projectModel) {
+		if (!relatedPoms.contains(projectModel.getPomFile().toPath()))
+			return;
+		projectModel.setVersion(versionStrategy.toVersionString());
+
+		Parent parent = projectModel.getParent();
+		if (parent != null) {
+			parent.setVersion(versionStrategy.toVersionString());
+		}
 	}
 
 	private VersionConfig loadConfig() {
 		VersionConfig versionConfig = new VersionConfig();
 		Properties properties = loadExtensionProperties();
-		InitialVersion iv = new InitialVersion();
-		iv.setMajor(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_MAJOR, "0")));
-		iv.setMinor(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_MINOR, "0")));
-		iv.setPatch(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_PATCH, "0")));
-		versionConfig.setInitial(iv);
+		InitialVersion version = new InitialVersion();
+		version.setMajor(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_MAJOR, "0")));
+		version.setMinor(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_MINOR, "0")));
+		version.setPatch(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_PATCH, "0")));
+		versionConfig.setInitial(version);
 
-		VersionKeywords vk = new VersionKeywords();
-		vk.setMajorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MAJOR_KEY));
-		vk.setMinorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MINOR_KEY));
-		vk.setPatchKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_PATCH_KEY));
-		versionConfig.setKeywords(vk);
+		VersionKeywords keywords = new VersionKeywords();
+		keywords.setMajorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MAJOR_KEY));
+		keywords.setMinorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MINOR_KEY));
+		keywords.setPatchKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_PATCH_KEY));
+		versionConfig.setKeywords(keywords);
 
 		return versionConfig;
 	}
@@ -103,5 +126,13 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 			}
 		}
 		return props;
+	}
+
+	private void findRelatedProjects(Model projectModel) {
+		LOGGER.debug("Finding related projects for {}", projectModel.getArtifactId());
+		List<Path> modulePoms = projectModel.getModules().stream().map(module -> projectModel.getProjectDirectory()
+				.toPath().resolve(module).resolve("pom.xml").toAbsolutePath()).collect(Collectors.toList());
+		LOGGER.debug("Modules found: {}", modulePoms);
+		relatedPoms.addAll(modulePoms);
 	}
 }
