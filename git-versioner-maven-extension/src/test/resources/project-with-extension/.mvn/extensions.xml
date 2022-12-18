@@ -3,7 +3,7 @@
     <extension>
         <groupId>com.github.manikmagar</groupId>
         <artifactId>git-versioner-maven-extension</artifactId>
-        <version>V-LATEST</version>
+        <version>V-LATEST-SNAPSHOT</version>
     </extension>
 
 </extensions>

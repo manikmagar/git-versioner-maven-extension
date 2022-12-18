@@ -20,7 +20,9 @@ public class ProjectMojoRule extends MojoRule {
 		try (FileReader reader = new FileReader(pom)) {
 			Model model = mavenReader.read(reader);
 			model.setPomFile(pom);
-			return new MavenProject(model);
+			MavenProject mavenProject = new MavenProject(model);
+			mavenProject.setFile(pom);
+			return mavenProject;
 		} catch (Exception e) {
 			throw new RuntimeException("Couldn't read pom: " + pom);
 		}

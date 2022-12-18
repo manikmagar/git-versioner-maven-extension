@@ -7,8 +7,7 @@ import com.github.manikmagar.maven.versioner.core.params.VersionConfig;
 import com.github.manikmagar.maven.versioner.core.params.VersionKeywords;
 import com.github.manikmagar.maven.versioner.core.version.VersionStrategy;
 import org.apache.maven.building.Source;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
+import org.apache.maven.model.*;
 import org.apache.maven.model.building.DefaultModelProcessor;
 import org.apache.maven.model.building.ModelProcessor;
 import org.eclipse.sisu.Typed;
@@ -24,10 +23,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -96,11 +92,33 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 			parent.setVersion(versionStrategy.toVersionString());
 		}
 
-		Path gitVersionerPom = PomUtil.writePom(projectModel, projectModel.getPomFile().toPath());
-		// Use new pom to build.
-		// When publishing to remote, this will publish poms with updated parent
-		// versions if applicable.
-		projectModel.setPomFile(gitVersionerPom.toFile());
+		Util.writePom(projectModel, projectModel.getPomFile().toPath());
+		// NOTE: Build plugin must be running a mojo to set .git-versioner.pom.xml as
+		// project pom
+		// Otherwise, the published pom will still be original pom.xml with default
+		// version
+		addVersionerBuildPlugin(projectModel);
+	}
+
+	private static void addVersionerBuildPlugin(Model projectModel) {
+		Artifact extensionArtifact = Util.extensionArtifact();
+		if (projectModel.getBuild() == null) {
+			projectModel.setBuild(new Build());
+		}
+		if (projectModel.getBuild().getPlugins() == null) {
+			projectModel.getBuild().setPlugins(new ArrayList<>());
+		}
+
+		Plugin plugin = new Plugin();
+		plugin.setGroupId(extensionArtifact.getGroupId());
+		plugin.setArtifactId(extensionArtifact.getArtifactId().replace("-extension", "-plugin"));
+		plugin.setVersion(extensionArtifact.getVersion());
+
+		PluginExecution execution = new PluginExecution();
+		execution.setId("extension-set");
+		execution.setGoals(Collections.singletonList("set"));
+		plugin.addExecution(execution);
+		projectModel.getBuild().getPlugins().add(0, plugin);
 	}
 
 	private VersionConfig loadConfig() {

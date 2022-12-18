@@ -5,7 +5,7 @@
 
   <groupId>com.github.manikmagar</groupId>
   <artifactId>git-versioner-maven-parent</artifactId>
-  <version>V-LATEST</version>
+  <version>V-LATEST-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Git Versioner Maven Parent</name>
@@ -63,6 +63,15 @@
   </issueManagement>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>git-versioner-maven-*.properties</include>
+        </includes>
+      </resource>
+    </resources>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>

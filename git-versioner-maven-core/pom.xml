@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.github.manikmagar</groupId>
         <artifactId>git-versioner-maven-parent</artifactId>
-        <version>V-LATEST</version>
+        <version>V-LATEST-SNAPSHOT</version>
     </parent>
 
     <artifactId>git-versioner-maven-core</artifactId>
-    <version>V-LATEST</version>
     <name>Git Versioner Maven Core</name>
+
     <dependencies>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
