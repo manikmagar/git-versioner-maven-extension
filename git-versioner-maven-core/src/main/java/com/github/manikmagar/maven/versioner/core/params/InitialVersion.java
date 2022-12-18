@@ -3,7 +3,6 @@ package com.github.manikmagar.maven.versioner.core.params;
 import java.util.Objects;
 
 import com.github.manikmagar.maven.versioner.core.Util;
-import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Defines the initial values for version components in SemVer -
@@ -16,9 +15,9 @@ public final class InitialVersion {
 	public static final String GV_INITIAL_VERSION_PATCH = "gv.initialVersion.patch";
 
 	public InitialVersion(int major, int minor, int patch) {
-		this._major = major;
-		this._minor = minor;
-		this._patch = patch;
+		setMajor(major);
+		setMinor(minor);
+		setPatch(patch);
 	}
 
 	public InitialVersion() {
@@ -28,44 +27,41 @@ public final class InitialVersion {
 	/**
 	 * Initial Major version.
 	 */
-	@Parameter(name = "major", defaultValue = "0", property = GV_INITIAL_VERSION_MAJOR)
-	private int _major = 0;
+	private int major = 0;
 	/**
 	 * Initial Minor version.
 	 */
-	@Parameter(name = "minor", defaultValue = "0", property = GV_INITIAL_VERSION_MINOR)
-	private int _minor = 0;
+	private int minor = 0;
 	/**
 	 * Initial Patch version.
 	 */
-	@Parameter(name = "patch", defaultValue = "0", property = GV_INITIAL_VERSION_PATCH)
-	private int _patch = 0;
+	private int patch = 0;
 
 	public int getMajor() {
-		return _major;
+		return major;
 	}
 
 	public void setMajor(int major) {
 		Util.mustBePositive(major, "InitialVersion.major");
-		this._major = major;
+		this.major = major;
 	}
 
 	public int getMinor() {
-		return _minor;
+		return minor;
 	}
 
 	public void setMinor(int minor) {
 		Util.mustBePositive(minor, "InitialVersion.minor");
-		this._minor = minor;
+		this.minor = minor;
 	}
 
 	public int getPatch() {
-		return _patch;
+		return patch;
 	}
 
 	public void setPatch(int patch) {
 		Util.mustBePositive(patch, "InitialVersion.patch");
-		this._patch = patch;
+		this.patch = patch;
 	}
 
 	@Override
@@ -75,11 +71,11 @@ public final class InitialVersion {
 		if (!(o instanceof InitialVersion))
 			return false;
 		InitialVersion that = (InitialVersion) o;
-		return _major == that._major && _minor == that._minor && _patch == that._patch;
+		return major == that.major && minor == that.minor && patch == that.patch;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_major, _minor, _patch);
+		return Objects.hash(major, minor, patch);
 	}
 }

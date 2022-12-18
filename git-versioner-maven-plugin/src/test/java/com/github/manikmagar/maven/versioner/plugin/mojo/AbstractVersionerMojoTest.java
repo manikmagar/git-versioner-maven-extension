@@ -3,6 +3,8 @@ package com.github.manikmagar.maven.versioner.plugin.mojo;
 import com.github.manikmagar.maven.versioner.core.git.JGitVersioner;
 import com.github.manikmagar.maven.versioner.core.version.SemVerStrategy;
 import com.github.manikmagar.maven.versioner.core.version.Versioner;
+import com.github.manikmagar.maven.versioner.plugin.mojo.params.InitialVersionParam;
+import com.github.manikmagar.maven.versioner.plugin.mojo.params.VersionConfigParam;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Test;
@@ -25,7 +27,7 @@ public class AbstractVersionerMojoTest {
 	@Test
 	public void getVersionConfig() {
 		assertThat(testMojo.getVersionConfig()).isNotNull();
-		assertThat(testMojo.getVersionConfig().getInitial()).isNotNull().isEqualTo(new InitialVersion(0, 0, 0));
+		assertThat(testMojo.getVersionConfig().getInitial()).isNotNull().isEqualTo(new InitialVersionParam(0, 0, 0));
 		assertThat(testMojo.getVersionConfig().getKeywords()).isNotNull().extracting("majorKey", "minorKey", "patchKey")
 				.containsExactly(KEY_MAJOR, KEY_MINOR, KEY_PATCH);
 	}
@@ -38,8 +40,8 @@ public class AbstractVersionerMojoTest {
 
 			}
 		};
-		InitialVersion one = new InitialVersion(1, 0, 0);
-		VersionConfig versionConfig = new VersionConfig();
+		InitialVersionParam one = new InitialVersionParam(1, 0, 0);
+		VersionConfigParam versionConfig = new VersionConfigParam();
 		versionConfig.setInitial(one);
 		mojo.setVersionConfig(versionConfig);
 		assertThat(mojo.getVersionConfig().getInitial()).isNotNull().isEqualTo(one);

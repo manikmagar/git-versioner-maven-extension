@@ -1,19 +1,17 @@
 package com.github.manikmagar.maven.versioner.core.params;
 
-import org.apache.maven.plugins.annotations.Parameter;
+import java.util.Objects;
 
 public final class VersionConfig {
 
 	/**
 	 * Define initial version components
 	 */
-	@Parameter(name = "initial")
 	private InitialVersion initial = new InitialVersion();
 
 	/**
 	 * Define the version keywords to use when parsing git commit messages
 	 */
-	@Parameter(name = "keywords")
 	private VersionKeywords keywords = new VersionKeywords();
 
 	public InitialVersion getInitial() {
@@ -30,5 +28,20 @@ public final class VersionConfig {
 
 	public void setKeywords(VersionKeywords keywords) {
 		this.keywords = keywords;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof VersionConfig))
+			return false;
+		VersionConfig that = (VersionConfig) o;
+		return getInitial().equals(that.getInitial()) && getKeywords().equals(that.getKeywords());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getInitial(), getKeywords());
 	}
 }
