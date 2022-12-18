@@ -53,8 +53,8 @@ public class ExtensionTestIT {
 			verifier.verifyErrorFreeLog();
 			String expectedVersion = "0.0.0";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
-			assertThat(tempProject.toPath().resolve(PomUtil.GIT_VERSIONER_POM_XML).toFile())
-					.as("Git versioner pom file").exists();
+			assertThat(tempProject.toPath().resolve(Util.GIT_VERSIONER_POM_XML).toFile()).as("Git versioner pom file")
+					.exists();
 		}
 	}
 

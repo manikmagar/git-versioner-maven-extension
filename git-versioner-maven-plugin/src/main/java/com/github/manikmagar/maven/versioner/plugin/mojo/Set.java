@@ -34,6 +34,14 @@ public class Set extends AbstractVersionerMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
+		File gitVersionerPom = mavenProject.getBasedir().toPath().resolve(".git-versioner.pom.xml").toFile();
+		if (gitVersionerPom.exists()) {
+			// Extension is in-force, user the generated pom
+			mavenProject.setPomFile(gitVersionerPom);
+			return;
+		}
+		getLog().warn(
+				"Git-versioner is running in Plugin mode. It is recommended to use it as Maven Build extension instead.");
 		VersionStrategy version = getVersioner().version();
 		if (version.getHash().isEmpty()) {
 			getLog().warn(String.format("No HEAD ref found on branch %s.", version.getBranchName()));

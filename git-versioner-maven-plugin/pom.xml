@@ -6,18 +6,16 @@
     <parent>
         <groupId>com.github.manikmagar</groupId>
         <artifactId>git-versioner-maven-parent</artifactId>
-        <version>V-LATEST</version>
+        <version>V-LATEST-SNAPSHOT</version>
     </parent>
 
     <artifactId>git-versioner-maven-plugin</artifactId>
-    <version>V-LATEST</version>
     <packaging>maven-plugin</packaging>
     <name>Git Versioner Maven Plugin</name>
 
     <prerequisites>
         <maven>${maven.version}</maven>
     </prerequisites>
-
     <dependencies>
         <dependency>
             <groupId>com.github.manikmagar</groupId>
