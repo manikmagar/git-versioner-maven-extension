@@ -78,7 +78,6 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		// Use first initialized flag to avoid processing other classpath poms.
 		if (!initialized) {
 			versionStrategy = new JGitVersioner(loadConfig()).version();
-			projectModel.setVersion(versionStrategy.toVersionString());
 			findRelatedProjects(projectModel);
 			initialized = true;
 		}
@@ -89,12 +88,19 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 	private void processRelatedProjects(Model projectModel) {
 		if (!relatedPoms.contains(projectModel.getPomFile().toPath()))
 			return;
+
 		projectModel.setVersion(versionStrategy.toVersionString());
 
 		Parent parent = projectModel.getParent();
 		if (parent != null) {
 			parent.setVersion(versionStrategy.toVersionString());
 		}
+
+		Path gitVersionerPom = PomUtil.writePom(projectModel, projectModel.getPomFile().toPath());
+		// Use new pom to build.
+		// When publishing to remote, this will publish poms with updated parent
+		// versions if applicable.
+		projectModel.setPomFile(gitVersionerPom.toFile());
 	}
 
 	private VersionConfig loadConfig() {
@@ -129,6 +135,11 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 
 	private void findRelatedProjects(Model projectModel) {
 		LOGGER.debug("Finding related projects for {}", projectModel.getArtifactId());
+
+		// Add main project
+		relatedPoms.add(projectModel.getPomFile().toPath());
+
+		// Find modules
 		List<Path> modulePoms = projectModel.getModules().stream().map(module -> projectModel.getProjectDirectory()
 				.toPath().resolve(module).resolve("pom.xml").toAbsolutePath()).collect(Collectors.toList());
 		LOGGER.debug("Modules found: {}", modulePoms);
