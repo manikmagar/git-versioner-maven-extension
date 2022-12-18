@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
-          path: ./target/surefire-reports/*.xml
+          path: ./*/*/surefire-reports/*.xml
   publish-test-results:
     name: "Publish Tests Results"
     needs: build
