@@ -15,6 +15,11 @@ project:
   inceptionYear: 2022
   tags:
     - maven
+    - git-versioning
+    - project-versioning
+    - versioning
+    - maven-extension
+    - maven-plugin
   java:
     groupId: com.github.manikmagar
     version: 11
@@ -69,6 +74,9 @@ deploy:
         releaseRepository: true
         stagingRepositories:
           - target/staging-deploy
+          - git-versioner-maven-core/target/staging-deploy
+          - git-versioner-maven-plugin/target/staging-deploy
+          - git-versioner-maven-extension/target/staging-deploy
 
 announce:
   twitter:

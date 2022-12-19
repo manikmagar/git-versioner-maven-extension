@@ -35,10 +35,11 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRO }}
           cache: maven
-      - name: Install LATEST
+      - name: Install LATEST extension
         run: ./mvnw install
-      - name: Set Version
-        run: ./mvnw validate -Pgit-versioner
+      - name: Configure git-versioner Extension
+        run: |
+          mv ./.mvn/extensions.xml.template ./.mvn/extensions.xml
       - name: Stage Deploy
         run: ./mvnw deploy -Pdeploy -DskipTests
       - name: Run JReleaser Deploy
