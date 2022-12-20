@@ -342,6 +342,7 @@
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
             </configuration>
             <executions>
               <execution>
@@ -357,6 +358,11 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <systemProperties>
+                <maven.repo.local>${project.build.directory}/local-repo</maven.repo.local>
+              </systemProperties>
+            </configuration>
             <executions>
               <execution>
                 <goals>
