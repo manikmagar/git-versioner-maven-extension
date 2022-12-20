@@ -1,0 +1,26 @@
+= Contributing
+
+
+== Build
+
+Install artifacts to local repository -
+
+[source,shell]
+----
+./mvnw install
+----
+
+== Releasing
+
+We use this same extension to version, so make sure V-LATEST-SNAPSHOT (default build version)
+installed in local repository.
+
+To deploy artifacts to local staging repository, first Configure the maven build extension and then deploy -
+
+[source,xml]
+----
+cp ./mvn/extensions.xml.template ./mvn/extensions.xml
+./mvnw deploy -Pdeploy
+----
+
+

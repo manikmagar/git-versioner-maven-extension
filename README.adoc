@@ -39,19 +39,10 @@ Plugin supports following keywords -
 - `[patch]` - A Patch version milestone Eg. 1.1.1 -> 1.1.2
 
 == How to configure?
-This can be used as a Maven Build extension or as a rgfa
-egular maven plugin.
+This is a maven build core extension that can -
 
-NOTE: It is **highly** recommended that you use this as *Maven Build Extension* for seamless version integration.
-See below for more details.
-
-=== Using as Maven Build Extension
-.**Since v0.4.0**
-
-When used as a maven build extension:
-
-- Participates in maven build lifecycle
-- Automatically sets the building project's version
+- Participate in maven build lifecycle
+- Automatically set the building project's version
 - No explicit mojo executions needed to set the version
 - Project's POM remain unchanged
 
@@ -82,7 +73,8 @@ With just that configuration, next time your project runs any maven goals, you s
 Try running `mvn package` on your project.
 
 === Using as Maven Plugin
-.**Since 0.1.0**
+
+TIP: It is recommended to use as extension instead of plugin for version management
 
 When used as a regular maven plugin:
 

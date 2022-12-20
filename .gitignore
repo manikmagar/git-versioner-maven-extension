@@ -16,3 +16,5 @@ buildNumber.properties
 **/.git-versioner.pom.xml
 /.mvn/extensions.xml
 **/*.iml
+/jreleaser-1.4.0-SNAPSHOT/
+out
