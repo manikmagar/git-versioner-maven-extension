@@ -10,6 +10,7 @@ import org.apache.maven.building.Source;
 import org.apache.maven.model.*;
 import org.apache.maven.model.building.DefaultModelProcessor;
 import org.apache.maven.model.building.ModelProcessor;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.eclipse.sisu.Typed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,9 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		// The first execution is with the project's pom though.
 		// Use first initialized flag to avoid processing other classpath poms.
 		if (!initialized) {
+			GAV extensionGAV = Util.extensionArtifact();
+			LOGGER.info(MessageUtils.buffer().a("--- ").mojo(extensionGAV).a(" ").strong("[core-extension]").a(" ---")
+					.toString());
 			versionStrategy = new JGitVersioner(loadConfig()).version();
 			findRelatedProjects(projectModel);
 			initialized = true;
@@ -84,15 +88,29 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 	private void processRelatedProjects(Model projectModel) {
 		if (!relatedPoms.contains(projectModel.getPomFile().toPath()))
 			return;
-
+		LOGGER.info("Project {}:{}, Computed version: {}", getGroupId(projectModel), projectModel.getArtifactId(),
+				MessageUtils.buffer().strong(versionStrategy.toVersionString()));
 		projectModel.setVersion(versionStrategy.toVersionString());
 
 		Parent parent = projectModel.getParent();
 		if (parent != null) {
-			parent.setVersion(versionStrategy.toVersionString());
+			var path = Paths.get(parent.getRelativePath());
+			// Parent is part of this build
+			try {
+				if (Files.exists(path) && this.relatedPoms
+						.contains(projectModel.getProjectDirectory().toPath().resolve(path).toRealPath())) {
+					LOGGER.info("Setting parent {} version to {}", parent, versionStrategy.toVersionString());
+					parent.setVersion(versionStrategy.toVersionString());
+				} else {
+					LOGGER.debug("Parent {} is not part of this build. Skipping version change for parent.", parent);
+				}
+			} catch (IOException e) {
+				throw new GitVersionerException(e.getMessage(), e);
+			}
 		}
 
-		Util.writePom(projectModel, projectModel.getPomFile().toPath());
+		Path versionerPom = Util.writePom(projectModel, projectModel.getPomFile().toPath());
+		LOGGER.debug("Generated versioner pom at {}", versionerPom);
 		// NOTE: Build plugin must be running a mojo to set .git-versioner.pom.xml as
 		// project pom
 		// Otherwise, the published pom will still be original pom.xml with default
@@ -100,8 +118,14 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		addVersionerBuildPlugin(projectModel);
 	}
 
+	private static String getGroupId(Model projectModel) {
+		return (projectModel.getGroupId() == null && projectModel.getParent() != null)
+				? projectModel.getParent().getGroupId()
+				: projectModel.getGroupId();
+	}
+
 	private static void addVersionerBuildPlugin(Model projectModel) {
-		Artifact extensionArtifact = Util.extensionArtifact();
+		GAV extensionGAV = Util.extensionArtifact();
 		if (projectModel.getBuild() == null) {
 			projectModel.setBuild(new Build());
 		}
@@ -110,9 +134,9 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		}
 
 		Plugin plugin = new Plugin();
-		plugin.setGroupId(extensionArtifact.getGroupId());
-		plugin.setArtifactId(extensionArtifact.getArtifactId().replace("-extension", "-plugin"));
-		plugin.setVersion(extensionArtifact.getVersion());
+		plugin.setGroupId(extensionGAV.getGroupId());
+		plugin.setArtifactId(extensionGAV.getArtifactId().replace("-extension", "-plugin"));
+		plugin.setVersion(extensionGAV.getVersion());
 
 		PluginExecution execution = new PluginExecution();
 		execution.setId("extension-set");
@@ -142,6 +166,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		Properties props = new Properties();
 		Path propertiesPath = Paths.get(DOT_MVN, GIT_VERSIONER_EXTENSIONS_PROPERTIES);
 		if (propertiesPath.toFile().exists()) {
+			LOGGER.debug("Reading versioner properties from {}", propertiesPath);
 			try (Reader reader = Files.newBufferedReader(propertiesPath)) {
 				props.load(reader);
 			} catch (IOException e) {

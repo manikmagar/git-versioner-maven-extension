@@ -10,7 +10,9 @@ import java.util.Properties;
 
 import com.github.manikmagar.maven.versioner.core.GitVersionerException;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 public class Util {
 
@@ -33,13 +35,20 @@ public class Util {
 		}
 		return newPomPath;
 	}
-
-	public static Artifact extensionArtifact() {
+	public static Model readPom(Path pomPath) {
+		try (InputStream inputStream = Files.newInputStream(pomPath)) {
+			MavenXpp3Reader reader = new MavenXpp3Reader();
+			return reader.read(inputStream);
+		} catch (IOException | XmlPullParserException e) {
+			throw new GitVersionerException(e.getMessage(), e);
+		}
+	}
+	public static GAV extensionArtifact() {
 		Properties props = new Properties();
 		try (InputStream inputStream = Util.class.getClassLoader().getResource(GIT_VERSIONER_MAVEN_EXTENSION_PROPERTIES)
 				.openStream()) {
 			props.load(inputStream);
-			return Artifact.with(props.getProperty("projectGroupId"), props.getProperty("projectArtifactId"),
+			return GAV.with(props.getProperty("projectGroupId"), props.getProperty("projectArtifactId"),
 					props.getProperty("projectVersion"));
 		} catch (Exception e) {
 			throw new GitVersionerException(e.getMessage(), e);
