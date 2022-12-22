@@ -47,7 +47,9 @@ public class Version {
 	public String getHash() {
 		return hash;
 	}
-
+	public String getHashShort() {
+		return hash != null ? hash.substring(0, 7) : null;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

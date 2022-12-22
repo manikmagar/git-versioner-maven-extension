@@ -244,35 +244,23 @@ WARNING: Maven Extension DOES NOT use configuration element from plugin, if exis
 TIP: DO NOT combine using extension as well as maven plugin `set` goal. Extension mode is recommended for versioning.
 
 === Can I access generated version properties?
-.[Plugin-only feature]
-Yes, the plugin exposes a new goal called `properties` that can set calculated version components to maven properties.
+When using as an extension, following properties are made available as *Maven properties* during build cycle -
 
-If you have added the plugin to your pom.xml, you can run `git-versioner:properties` goal to set those properties.
+.Example of Injected maven properties (demo values)
+[source, properties]
+----
+git-versioner.commitNumber=0
+git-versioner.major=0
+git-versioner.minor=0
+git-versioner.patch=1
+git-versioner.version=0.0.1
+git.branch=main
+git.hash=67550ad6a64fe4e09bf9e36891c09b2f7bdc52f9
+git.hash.short=67550ad
+----
 
-.Example display properties without git-versioner:properties
-[source, shell]
-----
-$ mvn help:evaluate -Dexpression=project.properties -q -DforceStdout
-[INFO] [stdout] <properties>
-[INFO] [stdout]   <maven.compiler.source>11</maven.compiler.source>
-[INFO] [stdout]   <maven.compiler.target>11</maven.compiler.target>
-[INFO] [stdout] </properties>
-----
+You may use these properties in maven pom file, for example as `${git.branch}` to access git branch name.
 
-.Example displaying properties with git-versioner:properties
-[source,shell]
-----
-$ mvn git-versioner:properties help:evaluate -Dexpression=project.properties -q -DforceStdout
-[INFO] [stdout] <properties>
-[INFO] [stdout]   <git-versioner.commitNumber>0</git-versioner.commitNumber>
-[INFO] [stdout]   <git-versioner.major>0</git-versioner.major>
-[INFO] [stdout]   <git-versioner.minor>0</git-versioner.minor>
-[INFO] [stdout]   <git-versioner.patch>1</git-versioner.patch>
-[INFO] [stdout]   <git-versioner.semver>0.0.1</git-versioner.semver>
-[INFO] [stdout]   <maven.compiler.source>11</maven.compiler.source>
-[INFO] [stdout]   <maven.compiler.target>11</maven.compiler.target>
-[INFO] [stdout] </properties>
-----
 
 === How to create Git tags?
 .[Plugin-only feature]
