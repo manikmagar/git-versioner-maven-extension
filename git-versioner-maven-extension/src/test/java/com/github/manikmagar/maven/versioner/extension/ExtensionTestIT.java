@@ -154,6 +154,26 @@ public class ExtensionTestIT {
 			verifier.verifyTextInLog("Building lib " + expectedVersion);
 		}
 	}
+	@Test
+	public void extensionWithParentChild() throws Exception {
+		File tempProject = temporaryFolder.newFolder("test").toPath().toFile();
+		FileUtils.copyDirectory(Paths.get("src/test/resources/parent-child-project").toFile(), tempProject);
+		try (Git git = getMain(tempProject)) {
+			addEmptyCommit(git);
+			addCommit(git, "[patch]");
+			Verifier verifier = new Verifier(tempProject.getAbsolutePath(), true);
+			verifier.displayStreamBuffers();
+			verifier.executeGoal("verify");
+			copyExecutionLog(tempProject, verifier, "extensionWithParentChild.log.txt");
+			verifier.verifyErrorFreeLog();
+			String expectedVersion = "0.0.1";
+			verifier.verifyTextInLog("Building parent-test-pom " + expectedVersion);
+			verifier.verifyTextInLog("Building cli " + expectedVersion);
+			verifier.verifyTextInLog(
+					"Setting parent com.github.manikmagar:parent-test-pom:pom:0 version to " + expectedVersion);
+			verifier.verifyTextInLog("Building lib " + expectedVersion);
+		}
+	}
 
 	@Test
 	@Parameters(value = {"[BIG], 1.0.0", "[MEDIUM], 0.1.0", "[SMALL], 0.0.1"})
