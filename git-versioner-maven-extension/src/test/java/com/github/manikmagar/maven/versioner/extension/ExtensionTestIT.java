@@ -59,6 +59,25 @@ public class ExtensionTestIT {
 	}
 
 	@Test
+	public void extensionBuildWithExistingPlugin() throws Exception {
+		File tempProject = temporaryFolder.newFolder("test").toPath().toFile();
+		FileUtils.copyDirectory(Paths.get("src/test/resources/project-with-extension-plugin").toFile(), tempProject);
+		try (Git git = getMain(tempProject)) {
+			addEmptyCommit(git);
+			Verifier verifier = new Verifier(tempProject.getAbsolutePath(), true);
+			verifier.displayStreamBuffers();
+			verifier.executeGoal("verify");
+			copyExecutionLog(tempProject, verifier, "extensionBuildWithExistingPlugin.log.txt");
+			verifier.verifyErrorFreeLog();
+			String expectedVersion = "0.0.0";
+			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("Using existing plugin execution with id set-version");
+			assertThat(tempProject.toPath().resolve(Util.GIT_VERSIONER_POM_XML).toFile()).as("Git versioner pom file")
+					.exists();
+		}
+	}
+
+	@Test
 	public void extensionValidateVersionProperties() throws Exception {
 		File tempProject = setupTestProject();
 		try (Git git = getMain(tempProject)) {

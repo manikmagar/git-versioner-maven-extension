@@ -135,17 +135,35 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		if (projectModel.getBuild().getPlugins() == null) {
 			projectModel.getBuild().setPlugins(new ArrayList<>());
 		}
-
 		Plugin plugin = new Plugin();
 		plugin.setGroupId(extensionGAV.getGroupId());
 		plugin.setArtifactId(extensionGAV.getArtifactId().replace("-extension", "-plugin"));
 		plugin.setVersion(extensionGAV.getVersion());
-
-		PluginExecution execution = new PluginExecution();
-		execution.setId("extension-set");
-		execution.setGoals(Collections.singletonList("set"));
-		plugin.addExecution(execution);
-		projectModel.getBuild().getPlugins().add(0, plugin);
+		Plugin existing = projectModel.getBuild().getPluginsAsMap().get(plugin.getKey());
+		boolean addExecution = true;
+		if (existing != null) {
+			plugin = existing;
+			LOGGER.warn("Found existing plugin configuration for {}", plugin.getKey());
+			if (!existing.getVersion().equals(extensionGAV.getVersion())) {
+				LOGGER.warn(MessageUtils.buffer().mojo(plugin).warning(" version is different than ").mojo(extensionGAV)
+						.newline().a("This can introduce unexpected behaviors.").toString());
+			}
+			Optional<PluginExecution> setGoal = existing.getExecutions().stream()
+					.filter(e -> e.getGoals().contains("set")).findFirst();
+			if (setGoal.isPresent()) {
+				LOGGER.info("Using existing plugin execution with id {}", setGoal.get().getId());
+				addExecution = false;
+			}
+		}
+		if (addExecution) {
+			LOGGER.debug("Adding build plugin execution for {}", plugin.getKey());
+			PluginExecution execution = new PluginExecution();
+			execution.setId("extension-set");
+			execution.setGoals(Collections.singletonList("set"));
+			plugin.addExecution(execution);
+		}
+		if (existing == null)
+			projectModel.getBuild().getPlugins().add(0, plugin);
 	}
 
 	private VersionConfig loadConfig() {
