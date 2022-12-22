@@ -97,8 +97,9 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 			var path = Paths.get(parent.getRelativePath());
 			// Parent is part of this build
 			try {
-				if (Files.exists(path) && this.relatedPoms
-						.contains(projectModel.getProjectDirectory().toPath().resolve(path).toRealPath())) {
+				Path parentPomPath = projectModel.getPomFile().getParentFile().toPath().resolve(path).toRealPath();
+				LOGGER.debug("Looking for parent pom {}", parentPomPath);
+				if (Files.exists(parentPomPath) && this.relatedPoms.contains(parentPomPath)) {
 					LOGGER.info("Setting parent {} version to {}", parent, versionStrategy.toVersionString());
 					parent.setVersion(versionStrategy.toVersionString());
 				} else {
@@ -126,6 +127,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 
 	private static void addVersionerBuildPlugin(Model projectModel) {
 		GAV extensionGAV = Util.extensionArtifact();
+		LOGGER.debug("Adding build plugin version {}", extensionGAV);
 		if (projectModel.getBuild() == null) {
 			projectModel.setBuild(new Build());
 		}
