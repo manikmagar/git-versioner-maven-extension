@@ -59,6 +59,29 @@ public class ExtensionTestIT {
 	}
 
 	@Test
+	public void extensionValidateVersionProperties() throws Exception {
+		File tempProject = setupTestProject();
+		try (Git git = getMain(tempProject)) {
+			addEmptyCommit(git);
+			addCommit(git, "[patch]");
+			Verifier verifier = new Verifier(tempProject.getAbsolutePath(), true);
+			verifier.displayStreamBuffers();
+			verifier.executeGoal("verify");
+			copyExecutionLog(tempProject, verifier, "extensionValidateVersionProperties.log.txt");
+			verifier.verifyErrorFreeLog();
+			String expectedVersion = "0.0.1";
+			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("git-versioner.commitNumber=0");
+			verifier.verifyTextInLog("git-versioner.major=0");
+			verifier.verifyTextInLog("git-versioner.minor=0");
+			verifier.verifyTextInLog("git-versioner.patch=1");
+			verifier.verifyTextInLog("git-versioner.version=0.0.1");
+			verifier.verifyTextInLog("git.branch=");
+			verifier.verifyTextInLog("git.hash=");
+			verifier.verifyTextInLog("git.hash.short=");
+		}
+	}
+	@Test
 	public void extensionBuildPatchVersion() throws Exception {
 		File tempProject = setupTestProject();
 		try (Git git = getMain(tempProject)) {

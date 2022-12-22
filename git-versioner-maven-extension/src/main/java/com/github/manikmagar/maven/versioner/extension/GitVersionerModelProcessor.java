@@ -10,6 +10,7 @@ import org.apache.maven.building.Source;
 import org.apache.maven.model.*;
 import org.apache.maven.model.building.DefaultModelProcessor;
 import org.apache.maven.model.building.ModelProcessor;
+import org.apache.maven.shared.utils.logging.MessageBuilder;
 import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.eclipse.sisu.Typed;
 import org.slf4j.Logger;
@@ -109,7 +110,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 				throw new GitVersionerException(e.getMessage(), e);
 			}
 		}
-
+		addVersionerProperties(projectModel);
 		Path versionerPom = Util.writePom(projectModel, projectModel.getPomFile().toPath());
 		LOGGER.debug("Generated versioner pom at {}", versionerPom);
 		// NOTE: Build plugin must be running a mojo to set .git-versioner.pom.xml as
@@ -189,5 +190,26 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 				.toPath().resolve(module).resolve("pom.xml").toAbsolutePath()).collect(Collectors.toList());
 		LOGGER.debug("Modules found: {}", modulePoms);
 		relatedPoms.addAll(modulePoms);
+	}
+
+	private void addVersionerProperties(Model projectModel) {
+		Map<String, String> properties = new TreeMap<>();
+		properties.put("git-versioner.version", versionStrategy.toVersionString());
+		properties.put("git-versioner.major", String.valueOf(versionStrategy.getVersion().getMajor()));
+		properties.put("git-versioner.minor", String.valueOf(versionStrategy.getVersion().getMinor()));
+		properties.put("git-versioner.patch", String.valueOf(versionStrategy.getVersion().getPatch()));
+		properties.put("git-versioner.commitNumber", String.valueOf(versionStrategy.getVersion().getCommit()));
+		properties.put("git.branch", versionStrategy.getVersion().getBranch());
+		properties.put("git.hash", versionStrategy.getVersion().getHash());
+		properties.put("git.hash.short", versionStrategy.getVersion().getHashShort());
+		MessageBuilder builder = MessageUtils.buffer().a("properties:");
+		for (Map.Entry<String, String> entry : properties.entrySet()) {
+			builder = builder.newline();
+			String key = entry.getKey();
+			String value = entry.getValue();
+			builder = builder.format("	%s=%s", key, value);
+		}
+		LOGGER.info("Adding generated properties to project model: {}", builder);
+		projectModel.getProperties().putAll(properties);
 	}
 }
