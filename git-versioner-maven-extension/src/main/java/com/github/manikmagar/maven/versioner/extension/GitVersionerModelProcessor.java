@@ -45,6 +45,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 
 	private final List<Path> relatedPoms = new ArrayList<>();
 	private VersionStrategy versionStrategy;
+	private Path dotmvnDirectory;
 
 	@Override
 	public Model read(File input, Map<String, ?> options) throws IOException {
@@ -66,7 +67,11 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 
 		if (pomSource != null) {
 			projectModel.setPomFile(new File(pomSource.getLocation()));
-		} else {
+		}
+
+		// Only source poms are with .xml
+		// dependency poms are with .pom
+		if (pomSource == null || !pomSource.getLocation().endsWith(".xml")) {
 			return projectModel;
 		}
 
@@ -75,6 +80,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		// The first execution is with the project's pom though.
 		// Use first initialized flag to avoid processing other classpath poms.
 		if (!initialized) {
+			dotmvnDirectory = getDOTMVNDirectory(projectModel.getPomFile().toPath());
 			GAV extensionGAV = Util.extensionArtifact();
 			LOGGER.info(MessageUtils.buffer().a("--- ").mojo(extensionGAV).a(" ").strong("[core-extension]").a(" ---")
 					.toString());
@@ -98,7 +104,8 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 			var path = Paths.get(parent.getRelativePath());
 			// Parent is part of this build
 			try {
-				Path parentPomPath = projectModel.getPomFile().getParentFile().toPath().resolve(path).toRealPath();
+				Path parentPomPath = Paths.get(
+						projectModel.getPomFile().getParentFile().toPath().resolve(path).toFile().getCanonicalPath());
 				LOGGER.debug("Looking for parent pom {}", parentPomPath);
 				if (Files.exists(parentPomPath) && this.relatedPoms.contains(parentPomPath)) {
 					LOGGER.info("Setting parent {} version to {}", parent, versionStrategy.toVersionString());
@@ -185,7 +192,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 	}
 	private Properties loadExtensionProperties() {
 		Properties props = new Properties();
-		Path propertiesPath = Paths.get(DOT_MVN, GIT_VERSIONER_EXTENSIONS_PROPERTIES);
+		Path propertiesPath = dotmvnDirectory.resolve(GIT_VERSIONER_EXTENSIONS_PROPERTIES);
 		if (propertiesPath.toFile().exists()) {
 			LOGGER.debug("Reading versioner properties from {}", propertiesPath);
 			try (Reader reader = Files.newBufferedReader(propertiesPath)) {
@@ -229,5 +236,23 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		}
 		LOGGER.info("Adding generated properties to project model: {}", builder);
 		projectModel.getProperties().putAll(properties);
+	}
+
+	/**
+	 * Find the first .mvn directory in currentDir and parents.
+	 * 
+	 * @param currentDir
+	 *            Path
+	 * @return Path of .mvn directory
+	 */
+	private static Path getDOTMVNDirectory(final Path currentDir) {
+		LOGGER.info("Finding .mvn in {}", currentDir);
+		Path refDir = currentDir;
+		Path dotMvn = refDir.resolve(DOT_MVN);
+		while (!Files.exists(dotMvn)) {
+			refDir = refDir.getParent();
+			dotMvn = refDir.resolve(DOT_MVN);
+		}
+		return dotMvn;
 	}
 }
