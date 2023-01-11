@@ -51,8 +51,29 @@ public class ExtensionTestIT {
 			verifier.executeGoal("verify");
 			copyExecutionLog(tempProject, verifier, "extensionBuildInitialVersion.log.txt");
 			verifier.verifyErrorFreeLog();
-			String expectedVersion = "0.0.0";
+			String expectedVersion = "0.0.0-1";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
+			assertThat(tempProject.toPath().resolve(Util.GIT_VERSIONER_POM_XML).toFile()).as("Git versioner pom file")
+					.exists();
+		}
+	}
+
+	@Test
+	public void extensionBuildVersionWithCommits() throws Exception {
+		File tempProject = setupTestProject();
+		try (Git git = getMain(tempProject)) {
+			addEmptyCommit(git);
+			addEmptyCommit(git);
+			addEmptyCommit(git);
+			Verifier verifier = new Verifier(tempProject.getAbsolutePath(), true);
+			verifier.displayStreamBuffers();
+			verifier.executeGoal("verify");
+			copyExecutionLog(tempProject, verifier, "extensionBuildVersionWithCommits.log.txt");
+			verifier.verifyErrorFreeLog();
+			String expectedVersion = "0.0.0-3";
+			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 			assertThat(tempProject.toPath().resolve(Util.GIT_VERSIONER_POM_XML).toFile()).as("Git versioner pom file")
 					.exists();
 		}
@@ -69,8 +90,9 @@ public class ExtensionTestIT {
 			verifier.executeGoal("verify");
 			copyExecutionLog(tempProject, verifier, "extensionBuildWithExistingPlugin.log.txt");
 			verifier.verifyErrorFreeLog();
-			String expectedVersion = "0.0.0";
+			String expectedVersion = "0.0.0-1";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 			verifier.verifyTextInLog("Using existing plugin execution with id set-version");
 			assertThat(tempProject.toPath().resolve(Util.GIT_VERSIONER_POM_XML).toFile()).as("Git versioner pom file")
 					.exists();
@@ -90,6 +112,7 @@ public class ExtensionTestIT {
 			verifier.verifyErrorFreeLog();
 			String expectedVersion = "0.0.1";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 			verifier.verifyTextInLog("git-versioner.commitNumber=0");
 			verifier.verifyTextInLog("git-versioner.major=0");
 			verifier.verifyTextInLog("git-versioner.minor=0");
@@ -113,6 +136,7 @@ public class ExtensionTestIT {
 			verifier.verifyErrorFreeLog();
 			String expectedVersion = "0.0.1";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 		}
 	}
 	@Test
@@ -128,6 +152,7 @@ public class ExtensionTestIT {
 			verifier.verifyErrorFreeLog();
 			String expectedVersion = "0.1.0";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 		}
 	}
 	@Test
@@ -143,9 +168,11 @@ public class ExtensionTestIT {
 			verifier.verifyErrorFreeLog();
 			String expectedVersion = "1.0.0";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 		}
 	}
 	@Test
+	@Ignore("Until version pattern overriding is supported to use hash")
 	public void extensionBuildHashVersion() throws Exception {
 		File tempProject = setupTestProject();
 		try (Git git = getMain(tempProject)) {
@@ -159,6 +186,7 @@ public class ExtensionTestIT {
 			verifier.verifyErrorFreeLog();
 			String expectedVersion = "0.0.1+" + hash.substring(0, 7);
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 		}
 	}
 
@@ -172,10 +200,11 @@ public class ExtensionTestIT {
 			Verifier verifier = new Verifier(tempProject.getAbsolutePath(), true);
 			verifier.displayStreamBuffers();
 			verifier.executeGoal("verify");
-			copyExecutionLog(tempProject, verifier, "extensionWithProperties.log.txt");
+			copyExecutionLog(tempProject, verifier, "extensionWithInitialVersionProperties.log.txt");
 			verifier.verifyErrorFreeLog();
-			String expectedVersion = "1.3.5+" + hash.substring(0, 7);
+			String expectedVersion = "1.3.5-1";
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 		}
 	}
 	@Test

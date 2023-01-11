@@ -2,10 +2,7 @@
 package com.github.manikmagar.maven.versioner.core.git;
 
 import com.github.manikmagar.maven.versioner.core.params.VersionConfig;
-import com.github.manikmagar.maven.versioner.core.version.SemVerStrategy;
-import com.github.manikmagar.maven.versioner.core.version.VersionComponentType;
-import com.github.manikmagar.maven.versioner.core.version.VersionStrategy;
-import com.github.manikmagar.maven.versioner.core.version.Versioner;
+import com.github.manikmagar.maven.versioner.core.version.*;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -30,7 +27,7 @@ public class JGitVersioner implements Versioner {
 			if (head != null && head.getObjectId() != null) {
 				hash = head.getObjectId().getName();
 			}
-			var versionStrategy = new SemVerStrategy(versionConfig.getInitial().getMajor(),
+			var versionStrategy = new VersionPatternStrategy(versionConfig.getInitial().getMajor(),
 					versionConfig.getInitial().getMinor(), versionConfig.getInitial().getPatch(), branch, hash);
 			var commits = git.log().call();
 			List<RevCommit> revCommits = StreamSupport.stream(commits.spliterator(), false)

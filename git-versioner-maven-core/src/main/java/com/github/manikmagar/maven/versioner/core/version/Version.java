@@ -12,16 +12,16 @@ public class Version {
 	private final String hash;
 
 	public Version(String branch, String hash) {
-		this(branch, hash, 0, 0, 0);
-		commit = 0;
+		this(branch, hash, 0, 0, 0, 0);
 	}
 
-	public Version(String branch, String hash, int major, int minor, int patch) {
+	public Version(String branch, String hash, int major, int minor, int patch, int commit) {
 		this.major = major;
 		this.minor = minor;
 		this.patch = patch;
 		this.branch = branch;
 		this.hash = hash;
+		this.commit = commit;
 	}
 
 	public int getMajor() {

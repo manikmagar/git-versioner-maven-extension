@@ -38,7 +38,8 @@ public class SemVerStrategy extends AbstractVersionStrategy {
 
 	@Override
 	public Version getVersion() {
-		return new Version(getBranchName(), getHash(), semVer.getMajor(), semVer.getMinor(), semVer.getPatch());
+		return new Version(getBranchName(), getHash(), semVer.getMajor(), semVer.getMinor(), semVer.getPatch(),
+				commitCount.get());
 	}
 
 	@Override
