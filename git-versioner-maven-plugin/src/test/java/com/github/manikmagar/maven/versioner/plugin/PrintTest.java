@@ -53,6 +53,6 @@ public class PrintTest extends AbstractMojoTest {
 		printVersionMojo.setLog(testLog);
 		assertThat(printVersionMojo).isNotNull();
 		printVersionMojo.execute();
-		assertThat(testLog.getMessages()).isNotEmpty().allMatch(s -> s.startsWith("SemVerStrategy [branch:"));
+		assertThat(testLog.getMessages()).isNotEmpty().allMatch(s -> s.startsWith("VersionPatternStrategy [branch:"));
 	}
 }
