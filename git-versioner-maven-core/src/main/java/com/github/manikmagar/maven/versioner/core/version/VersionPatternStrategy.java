@@ -7,12 +7,16 @@ import static java.lang.String.valueOf;
 public class VersionPatternStrategy extends SemVerStrategy {
 
 	public static final String DEFAULT_VERSION_PATTERN = "%M.%m.%p(-%c)";
-	private String versionPattern;
+	private final String versionPattern;
 
 	public VersionPatternStrategy(int major, int minor, int patch, String branchName, String hashRef,
 			String versionPattern) {
 		super(major, minor, patch, branchName, hashRef);
-		this.versionPattern = versionPattern;
+		if (versionPattern == null || versionPattern.isBlank()) {
+			this.versionPattern = DEFAULT_VERSION_PATTERN;
+		} else {
+			this.versionPattern = versionPattern;
+		}
 	}
 
 	public VersionPatternStrategy(String branchName, String hashRef, String versionPattern) {

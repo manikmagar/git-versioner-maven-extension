@@ -14,6 +14,8 @@ public final class VersionConfig {
 	 */
 	private VersionKeywords keywords = new VersionKeywords();
 
+	private VersionPattern versionPattern = new VersionPattern();
+
 	public InitialVersion getInitial() {
 		return initial;
 	}
@@ -30,6 +32,14 @@ public final class VersionConfig {
 		this.keywords = keywords;
 	}
 
+	public VersionPattern getVersionPattern() {
+		return versionPattern;
+	}
+
+	public void setVersionPattern(VersionPattern versionPattern) {
+		this.versionPattern = versionPattern;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -37,11 +47,12 @@ public final class VersionConfig {
 		if (!(o instanceof VersionConfig))
 			return false;
 		VersionConfig that = (VersionConfig) o;
-		return getInitial().equals(that.getInitial()) && getKeywords().equals(that.getKeywords());
+		return Objects.equals(getInitial(), that.getInitial()) && Objects.equals(getKeywords(), that.getKeywords())
+				&& Objects.equals(getVersionPattern(), that.getVersionPattern());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getInitial(), getKeywords());
+		return Objects.hash(getInitial(), getKeywords(), getVersionPattern());
 	}
 }

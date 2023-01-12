@@ -28,7 +28,8 @@ public class JGitVersioner implements Versioner {
 				hash = head.getObjectId().getName();
 			}
 			var versionStrategy = new VersionPatternStrategy(versionConfig.getInitial().getMajor(),
-					versionConfig.getInitial().getMinor(), versionConfig.getInitial().getPatch(), branch, hash);
+					versionConfig.getInitial().getMinor(), versionConfig.getInitial().getPatch(), branch, hash,
+					versionConfig.getVersionPattern().getPattern());
 			var commits = git.log().call();
 			List<RevCommit> revCommits = StreamSupport.stream(commits.spliterator(), false)
 					.collect(Collectors.toList());

@@ -5,6 +5,7 @@ import com.github.manikmagar.maven.versioner.core.git.JGitVersioner;
 import com.github.manikmagar.maven.versioner.core.params.InitialVersion;
 import com.github.manikmagar.maven.versioner.core.params.VersionConfig;
 import com.github.manikmagar.maven.versioner.core.params.VersionKeywords;
+import com.github.manikmagar.maven.versioner.core.params.VersionPattern;
 import com.github.manikmagar.maven.versioner.core.version.VersionStrategy;
 import org.apache.maven.building.Source;
 import org.apache.maven.model.*;
@@ -187,6 +188,10 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		keywords.setMinorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MINOR_KEY));
 		keywords.setPatchKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_PATCH_KEY));
 		versionConfig.setKeywords(keywords);
+
+		VersionPattern versionPattern = new VersionPattern();
+		versionPattern.setPattern(properties.getProperty(VersionPattern.GV_PATTERN_PATTERN));
+		versionConfig.setVersionPattern(versionPattern);
 
 		return versionConfig;
 	}

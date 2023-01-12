@@ -172,9 +172,8 @@ public class ExtensionTestIT {
 		}
 	}
 	@Test
-	@Ignore("Until version pattern overriding is supported to use hash")
 	public void extensionBuildHashVersion() throws Exception {
-		File tempProject = setupTestProject();
+		File tempProject = setupTestProject(true, "3.");
 		try (Git git = getMain(tempProject)) {
 			addEmptyCommit(git);
 			addCommit(git, "[patch]");
@@ -184,7 +183,7 @@ public class ExtensionTestIT {
 			verifier.executeGoal("verify");
 			copyExecutionLog(tempProject, verifier, "extensionBuildHashVersion.log.txt");
 			verifier.verifyErrorFreeLog();
-			String expectedVersion = "0.0.1+" + hash.substring(0, 7);
+			String expectedVersion = "1.3.5+" + hash.substring(0, 7);
 			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
 			verifier.verifyTextInLog("versioner-maven-extension-test-" + expectedVersion + ".jar");
 		}

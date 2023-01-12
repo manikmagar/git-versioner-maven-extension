@@ -182,6 +182,62 @@ git commit --allow-empty -m "chore: [<keyword>] release" // <1>
 
 <1> where `<keyword>` can be one of these - major, minor, or patch.
 
+== How to change the version pattern?
+
+The default version pattern used is `major.minor.patch(-commit)` where `(-commit)` is skipped if commit count is 0.
+
+When using as **Maven Build Extension**, it is possible to change this pattern by setting a property in `.mvn/git-versioner-extension.properties`.
+
+The following example will generate versions as `major.minor.patch+shorthash`, eg. `1.2.3+a5a29f8`.
+
+.Example configuration for version pattern in extension mode
+[source,properties]
+----
+gv.pattern.pattern=%M.%m.%p+%h
+----
+
+.Available Tokens for Version Pattern
+|===
+|Token |Description |Example
+
+|%M
+|Major Version
+|**1**.y.z
+
+|%m
+|Minor Version
+|x.**1**.z
+
+|%p
+|Patch Version
+|x.y.**1**
+
+|%c
+|Commit count
+|x.y.z-**4**
+
+|([anything]%c)
+|Non-Zero Commit count
+|Given _%M.%m.%p(-%c)_
+ with _%M=1_, _%m=2_, _%p=3_
+
+when c == 0 -> _1.2.3_
+
+when c > 0, = 5 -> _1.2.3-**5**_
+
+|%b
+|Branch name
+|_%M.%m.%p+%b_ -> _1.2.3+**main**_
+
+|%H
+|Long Hash Ref
+|_%M.%m.%p+%H_ -> _1.2.3+**b5f600c40f362d9977132e8bf7398d2cdc745c28**_
+
+|%h
+|Short Hash Ref
+|_%M.%m.%p+%H_ -> _1.2.3+**a5a29f8**_
+|===
+
 == How to customize version keywords?
 The default link:#versionKeywords[version keywords] `[major]`, `[minor]`, and `[patch]` can be customized by overriding the configuration.
 
