@@ -11,16 +11,76 @@ Install artifacts to local repository -
 ----
 
 == Releasing
+Github Actions workflow is configured to use this same extension to version the project
+and then use https://jreleaser.org/[JReleaser] to release this to https://search.maven.org/search?q=a:git-versioner-maven-extension[Maven Central].
 
-We use this same extension to version, so make sure V-LATEST-SNAPSHOT (default build version)
-installed in local repository.
+_To trigger the release:_
 
-To deploy artifacts to local staging repository, first Configure the maven build extension and then deploy -
+*Install* the latest extension to local repository -
 
-[source,xml]
+[source,shell]
 ----
-cp ./mvn/extensions.xml.template ./mvn/extensions.xml
-./mvnw deploy -Pdeploy
+./mvnw install
 ----
 
+*Commit* using one of the link:README.adoc#_how_do_i_increment_version[Version Commit goals] -
 
+.Example goal to increment patch
+[source,shell]
+----
+ ./mvnw com.github.manikmagar:git-versioner-maven-plugin:V-LATEST-SNAPSHOT:commit-patch --non-recursive
+----
+
+*Verify* the new version by running plugin's `print` goal -
+
+[source,shell]
+----
+ ./mvnw com.github.manikmagar:git-versioner-maven-plugin:V-LATEST-SNAPSHOT:print --non-recursive
+----
+
+In the output, you can look for version -
+
+.Example version 0.6.0 print
+[source,log]
+----
+...
+[INFO] --- git-versioner-maven-plugin:V-LATEST-SNAPSHOT:print (default-cli) @ git-versioner-maven-parent ---
+[INFO] VersionPatternStrategy [branch: main, version: 0.6.0, hash: 238bedfdff4e84f7c3964a494b91a76c4998287f]
+....
+----
+
+*Tag* the new version by running plugin's `tag` goal -
+
+[source,shell]
+----
+./mvnw com.github.manikmagar:git-versioner-maven-plugin:V-LATEST-SNAPSHOT:tag --non-recursive
+----
+
+This should create a tag with current verison.
+
+.Example tag goal creating v0.6.0 tag
+[source,log]
+----
+[INFO]
+[INFO] --- git-versioner-maven-plugin:V-LATEST-SNAPSHOT:tag (default-cli) @ git-versioner-maven-parent ---
+[INFO] Current Version: 0.6.0
+[INFO] Tag Version 'v0.6.0' with message 'Release version 0.6.0'
+[INFO] Created tag: 'refs/tags/v0.6.0@c95da362ef54a682f45b0a723aea609b3e980247'
+[INFO] ------------------------------------------------------------------------
+----
+
+**Push** the release commit and tag
+
+[source,shell]
+----
+# push branch commit
+git push
+
+# push the new tag
+# example - git push origin v0.6.0
+git push origin {tagName}
+----
+
+*Monitor* GitHub Actions Workflows for https://github.com/manikmagar/git-versioner-maven-plugin/actions/workflows/release.yml[release].
+
+Once the pipeline succeeds, the new release should soon be available on
