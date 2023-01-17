@@ -5,6 +5,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,8 +68,13 @@ public class VersionCommitTest extends AbstractMojoTest {
 		assertThat(tempProject.list()).contains("pom.xml");
 		return tempProject;
 	}
-	private static Git getMain(File tempProject) throws GitAPIException {
-		return Git.init().setInitialBranch("main").setDirectory(tempProject).call();
+	private static Git getMain(File tempProject) throws GitAPIException, IOException {
+		Git main = Git.init().setInitialBranch("main").setDirectory(tempProject).call();
+		StoredConfig config = main.getRepository().getConfig();
+		config.setString("user", null, "name", "GitHub Actions Test");
+		config.setString("user", null, "email", "");
+		config.save();
+		return main;
 	}
 	private static void addEmptyCommit(Git git) throws GitAPIException {
 		git.commit().setSign(false).setMessage("Empty commit").setAllowEmpty(true).call();

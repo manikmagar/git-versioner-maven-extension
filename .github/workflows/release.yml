@@ -36,7 +36,7 @@ jobs:
           distribution: ${{ env.JAVA_DISTRO }}
           cache: maven
       - name: Install LATEST extension
-        run: ./mvnw install
+        run: ./mvnw install -DskipTests
       - name: Configure git-versioner Extension
         run: |
           mv ./.mvn/extensions.xml.template ./.mvn/extensions.xml

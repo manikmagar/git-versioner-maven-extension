@@ -57,8 +57,8 @@ public abstract class VersionCommit extends AbstractVersionerMojo {
 			// settings such as sign
 			String gitDir = mavenProject.getBasedir().getAbsoluteFile().toPath().resolve(".git").toString();
 			boolean completed = new ProcessBuilder()
-					.command("git", "--git-dir", gitDir, "commit", "--allow-empty", "-m", resolvedMessage)
-					.redirectErrorStream(true).inheritIO().start().waitFor(5, TimeUnit.SECONDS);
+					.command("git", "--git-dir", gitDir, "commit", "--allow-empty", "-m", resolvedMessage).inheritIO()
+					.start().waitFor(5, TimeUnit.SECONDS);
 			if (!completed) {
 				throw new MojoFailureException("Timed out for creating commit");
 			}
