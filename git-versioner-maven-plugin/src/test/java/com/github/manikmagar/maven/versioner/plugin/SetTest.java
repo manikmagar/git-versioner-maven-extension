@@ -3,15 +3,13 @@ package com.github.manikmagar.maven.versioner.plugin;
 
 import java.io.File;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
-import org.mockito.Answers;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import com.github.manikmagar.maven.versioner.plugin.mojo.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 public class SetTest extends AbstractMojoTest {
 
@@ -26,11 +24,7 @@ public class SetTest extends AbstractMojoTest {
 
 		Set set = (Set) rule.lookupConfiguredMojo(pom, "set");
 		assertThat(set).isNotNull();
-		try (MockedStatic<MojoExecutor> executorMockedStatic = Mockito.mockStatic(MojoExecutor.class)) {
-			executorMockedStatic
-					.when(() -> MojoExecutor.executeMojo(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-					.then(Answers.RETURNS_DEFAULTS);
-			set.execute();
-		}
+		MojoExecutionException exception = catchThrowableOfType(() -> set.execute(), MojoExecutionException.class);
+		assertThat(exception).isNotNull().hasMessage("Cannot find .git-versioner.pom.xml");
 	}
 }

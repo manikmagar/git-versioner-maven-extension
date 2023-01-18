@@ -17,12 +17,17 @@ import org.apache.maven.plugins.annotations.Mojo;
  *   - git-versioner.patch
  *   - git-versioner.commit
  * </pre>
+ *
+ * @Deprecated: The extension adds versioner properties to maven properties.
+ *              This goal is not needed anymore.
  */
+@Deprecated
 @Mojo(name = "properties", defaultPhase = LifecyclePhase.VALIDATE)
 public class Properties extends AbstractVersionerMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		getLog().warn("This goal has been deprecated. Use properties injected by extension instead of this.");
 		VersionStrategy versionStrategy = getVersioner().version();
 		mavenProject.getProperties().put("git-versioner.semver", versionStrategy.toVersionString());
 		mavenProject.getProperties().put("git-versioner.major", versionStrategy.getVersion().getMajor());

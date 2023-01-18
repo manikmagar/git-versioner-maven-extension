@@ -23,22 +23,23 @@ a specific version keyword and watch the magic happen.
 toc::[]
 
 == How does it work?
-This plugin will look at all the commit history and compute the version number upto current commit.
+This extension iterates over all the commit history and looks for a predefined keywords representing version changes.
+It then computes the version number upto current commit.
 
-This plugin supports generating Semantic Versions `x.y.z` format. When additional commits exist after the patch,
-Git short hash for the latest commit is added as a build metadata - `x.y.z+shortHash`.
+The extension supports generating Semantic Versions `x.y.z` format. The format pattern is configurable to use
+values such as Git hash, branch name etc.
 
 [#versionKeywords]
 == What are version keywords?
-Version keywords are the reserved words that will define which milestone of the release is this.
+*Version keywords* are the reserved words that describes which milestone of the release is this.
 
-Plugin supports following keywords -
+By default, extension supports following keywords -
 
 - `[major]` - A Major version milestone Eg. 1.0.0 -> 2.0.0
 - `[minor]` - A Minor version milestone Eg. 1.1.0 -> 1.2.
 - `[patch]` - A Patch version milestone Eg. 1.1.1 -> 1.1.2
 
-See how to link:#versionKeywords_custom[Customize Version Keywords].
+To change the keywords, see how to link:#versionKeywords_custom[Customize Version Keywords].
 
 == How to configure?
 This is a maven build core extension that can -
@@ -71,68 +72,14 @@ NOTE: The artifact id is *git-versioner-maven-_extension_*.
 
 See an example test project at link:git-versioner-maven-extension/src/test/resources/project-with-extension/[].
 
-With just that configuration, next time your project runs any maven goals, you should see version from this module.
-Try running `mvn package` on your project.
-
-=== Using as Maven Plugin
-
-TIP: It is recommended to use as extension instead of plugin for version management
-
-When used as a regular maven plugin:
-
-- Project's POM needs to be configured with this plugin
-- Plugin configurations can be used to customize the version behavior
-- Requires a separate invocation of `git-version:set` or `initialize` goal
-- Updates the project POM with calculated version
-
-*Limitations:*
-
-- Can not change the project version in ongoing execution
-
-To use as a Maven plugin, add following configuration to your project's pom.xml -
-
-NOTE: The artifact id is *git-versioner-maven-_plugin_*.
-
-.Maven Plugin configuration
-[source, xml]
-----
-<plugin>
-    <groupId>com.github.manikmagar</groupId>
-    <artifactId>git-versioner-maven-plugin</artifactId>
-    <version>${git-versioner-maven-plugin.version}</version> // <1>
-    <executions>
-        <execution> // <2>
-            <id>set-version</id>
-            <goals>
-                <goal>set</goal>
-            </goals>
-        </execution>
-        <execution> // <3>
-            <id>print-version</id>
-            <goals>
-                <goal>print</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-----
-
-<1> Use the latest release version of this plugin.
-<2> Add an execution for `set` goal. By default, it will be bound to maven _INITIALIZE_ phase.
-<3> Optional. If you would like to print version details during _VALIDATE_ phase.
+With just that configuration, next time your project runs any maven goals, you should see version from this module
+is used by Maven reactor. Try running `mvn package` on your project.
 
 == How to start with a different version?
 It is possible that your project is already released with a certain version.
 In that case, you can configure the initial version to start counting versions from.
 
-Assuming your application released version is v1.3.4, when appropriate initial version is set, the first version calculated by this extension/plugin will be -
-
-- Major: *2.0.0*
-- Minor: 1.*4.0*
-- Patch: 1.3.*5*
-
-=== Using as Maven Build Extension
-When using as a build extension, you can add following properties to `.mvn/git-versioner-extension.properties` file -
+You can add following properties to `.mvn/git-versioner-extension.properties` file -
 
 .Example configuration for initial version for extension mode
 [source,properties]
@@ -142,52 +89,17 @@ gv.initialVersion.minor=3
 gv.initialVersion.patch=4
 ----
 
-=== Using as Maven Plugin
-You can set a `versionConfig.initial` configuration block as below -
+With above initial version configuration, the first version calculated by this extension will be -
 
-.Example configuration to start version from 1.3.4
-[source,xml]
-----
-<plugin>
-    <groupId>com.github.manikmagar</groupId>
-    <artifactId>git-versioner-maven-plugin</artifactId>
-    <version>${git-versioner-maven-plugin.version}</version>
-    <configuration>
-        <versionConfig>
-            <initial>               // <1>
-                <major>1</major>
-                <minor>3</minor>
-                <patch>4</patch>
-            </initial>
-        </versionConfig>
-    </configuration>
-    <executions>
-        <execution>
-            <id>set-version</id>
-            <goals>
-                <goal>set</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-----
+- Major: *2.0.0*
+- Minor: 1.*4.0*
+- Patch: 1.3.*5*
 
 == How do I increment version?
-Now that you have plugin configured, you can continue with your regular development.
+Now that you have extension configured, you can continue with your regular development.
 
-When it is time to increment version, you can add commits (preferably empty) with appropriate version keywords.
-
-=== Manual
-[source, shell]
-----
-git commit --allow-empty -m "chore: [<keyword>] release" // <1>
-----
-
-<1> where `<keyword>` can be one of these - major, minor, or patch.
-
-=== Plugin goal
-
-You may use one of the following three goals to add an *_empty commit_* with appropriate link:#versionKeywords[Version Keyword] -
+When it is time to increment version, you may use one of the following three goals
+to add an *_empty commit_* with appropriate link:#versionKeywords[Version Keyword] -
 
 - `git-versioner:commit-major`: Adds a git commit with a commit message containing *Major* version keyword
 - `git-versioner:commit-minor`: Adds a git commit with a commit message containing *Minor* version keyword
@@ -196,17 +108,30 @@ You may use one of the following three goals to add an *_empty commit_* with app
 The default message pattern is `chore(release): [%k]` where `[%k]` is the keyword token.
 To change the default message pattern, you could pass `-Dgv.commit.message=<message>` argument when running the goal.
 
+NOTE: When this extension is configured, it automatically makes `git-versioner` plugin goals available
+with *NO* any additional configuration.
+
 .Example commit patch with a custom message
 [source, shell]
 ----
 mvn git-versioner:commit-patch "-Dgv.commit.message=chore: [%k] release"
 ----
 
+Off course, you can also add commits manually with appropriate version keywords.
+
+.Manually adding a version commit
+[source, shell]
+----
+git commit --allow-empty -m "chore: [<keyword>] release" // <1>
+----
+
+<1> where `<keyword>` can be one of these - major, minor, or patch.
+
 == How to change the version pattern?
 
 The default version pattern used is `major.minor.patch(-commit)` where `(-commit)` is skipped if commit count is 0.
 
-When using as **Maven Build Extension**, it is possible to change this pattern by setting a property in `.mvn/git-versioner-extension.properties`.
+This pattern can be canged by setting a property in `.mvn/git-versioner-extension.properties`.
 
 The following example will generate versions as `major.minor.patch+shorthash`, eg. `1.2.3+a5a29f8`.
 
@@ -262,8 +187,7 @@ when c > 0, = 5 -> _1.2.3-**5**_
 == How to customize version keywords?
 The default link:#versionKeywords[version keywords] `[major]`, `[minor]`, and `[patch]` can be customized by overriding the configuration.
 
-=== Using as Maven Build Extension
-When using as a build extension, you can add following properties to `.mvn/git-versioner-extension.properties` file -
+To use different keywords, you can add following properties to `.mvn/git-versioner-extension.properties` file -
 
 .Example configuration for initial version for extension mode
 [source,properties]
@@ -273,55 +197,9 @@ gv.keywords.minorKey=[SMALL]
 gv.keywords.patchKey=[FIX]
 ----
 
-=== Using as Maven Plugin
 
-In this case, a `versionConfig.keywords` configuration block can be defined with required keywords.
-
-.Example configuration with keywords overriding
-[source,xml]
-----
-<plugin>
-    <groupId>com.github.manikmagar</groupId>
-    <artifactId>git-versioner-maven-plugin</artifactId>
-    <version>0.1.0</version>
-    <configuration>
-        <versionConfig>
-            <initial>
-                <major>1</major>
-                <minor>3</minor>
-                <patch>4</patch>
-            </initial>
-            <keywords>              // <1>
-                <majorKey>[BIG]</majorKey>
-                <minorKey>[SMALL]</minorKey>
-                <patchKey>[FIX]</patchKey>
-            </keywords>
-        </versionConfig>
-    </configuration>
-    <executions>
-        <execution>
-            <id>set-version</id>
-            <goals>
-                <goal>set</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-----
-
-<1> Override one or all version keywords.
-
-== Maven Plugin-only features
-
-When used a maven plugin, few additional feature goals are available.
-Even if the extension is being used, you can still add a maven plugin entry to leverage following goals.
-
-WARNING: Maven Extension DOES NOT use configuration element from plugin, if exist.
-
-TIP: DO NOT combine using extension as well as maven plugin `set` goal. Extension mode is recommended for versioning.
-
-=== Can I access generated version properties?
-When using as an extension, following properties are made available as *Maven properties* during build cycle -
+== How to access generated version properties?
+This extension adds all version properties to *Maven properties* during build cycle -
 
 .Example of Injected maven properties (demo values)
 [source, properties]
@@ -338,12 +216,22 @@ git.hash.short=67550ad
 
 You may use these properties in maven pom file, for example as `${git.branch}` to access git branch name.
 
+== How to create Git tags?
 
-=== How to create Git tags?
-.[Plugin-only feature]
 You can use `git-versioner:tag` goal to create a git tag for current version in local git repository.
 
 NOTE: This does not push tag to remote repository.
+
+.Tag goal with default parameter values
+[source,shell]
+----
+mvn git-versioner:tag \
+  "-Dtag.failWhenTagExist=true" \
+  "-Dtag.messagePattern=Release version %v" \
+  "-Dtag.namePattern=v%v"
+----
+
+For Tag goal, it is possible to configure pom.xml to contain the git-versioner plugin with required execution configuration.
 
 .Git Tag Goal with default configuration parameters
 [source, xml]
