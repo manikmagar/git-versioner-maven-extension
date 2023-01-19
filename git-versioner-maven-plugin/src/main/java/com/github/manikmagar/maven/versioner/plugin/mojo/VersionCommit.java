@@ -1,5 +1,6 @@
 package com.github.manikmagar.maven.versioner.plugin.mojo;
 
+import com.github.manikmagar.maven.versioner.core.git.JGit;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -55,7 +56,7 @@ public abstract class VersionCommit extends AbstractVersionerMojo {
 		try {
 			// Use local git configuration for any write operations to retain local user
 			// settings such as sign
-			String gitDir = mavenProject.getBasedir().getAbsoluteFile().toPath().resolve(".git").toString();
+			String gitDir = JGit.findGitDir(mavenProject.getBasedir().getAbsoluteFile().toPath().toString());
 			boolean completed = new ProcessBuilder()
 					.command("git", "--git-dir", gitDir, "commit", "--allow-empty", "-m", resolvedMessage).inheritIO()
 					.start().waitFor(5, TimeUnit.SECONDS);
