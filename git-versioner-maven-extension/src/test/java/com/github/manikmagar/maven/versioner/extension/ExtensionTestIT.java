@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.Verifier;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -261,6 +262,23 @@ public class ExtensionTestIT {
 		}
 	}
 
+	@Test
+	@Parameters(value = {"[BIG], 1.0.0, commit-major", "[MEDIUM], 0.1.0, commit-minor", "[SMALL], 0.0.1, commit-patch"})
+	public void extensionWithVersionKeyword_AddCommits(String key, String expectedVersion, String goal)
+			throws Exception {
+		File tempProject = setupTestProject(true, "2.");
+		try (Git git = getMain(tempProject)) {
+			addEmptyCommit(git);
+			Verifier verifier = new Verifier(tempProject.getAbsolutePath(), true);
+			verifier.displayStreamBuffers();
+			verifier.executeGoal("git-versioner:" + goal);
+			verifier.executeGoal("verify");
+			copyExecutionLog(tempProject, verifier, "extensionWithVersionKeyword_AddCommits" + key + ".log.txt");
+			verifier.verifyErrorFreeLog();
+			verifier.verifyTextInLog("Building versioner-maven-extension-test " + expectedVersion);
+		}
+	}
+
 	private static void copyExecutionLog(File tempProject, Verifier verifier, String logName) throws IOException {
 		Path target = Files.createDirectories(Paths.get("./target/it-logs/")).resolve(logName);
 		if (target.toFile().exists())
@@ -276,8 +294,13 @@ public class ExtensionTestIT {
 		return commit.toObjectId().getName();
 	}
 
-	private static Git getMain(File tempProject) throws GitAPIException {
-		return Git.init().setInitialBranch("main").setDirectory(tempProject).call();
+	private static Git getMain(File tempProject) throws GitAPIException, IOException {
+		Git main = Git.init().setInitialBranch("main").setDirectory(tempProject).call();
+		StoredConfig config = main.getRepository().getConfig();
+		config.setString("user", null, "name", "GitHub Actions Test");
+		config.setString("user", null, "email", "");
+		config.save();
+		return main;
 	}
 	private File setupTestProject() throws IOException {
 		return setupTestProject(false, "");

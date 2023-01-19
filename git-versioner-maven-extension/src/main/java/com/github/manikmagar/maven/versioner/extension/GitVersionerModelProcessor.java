@@ -13,16 +13,16 @@ import org.apache.maven.model.building.DefaultModelProcessor;
 import org.apache.maven.model.building.ModelProcessor;
 import org.apache.maven.shared.utils.logging.MessageBuilder;
 import org.apache.maven.shared.utils.logging.MessageUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.sisu.Typed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,6 +47,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 	private final List<Path> relatedPoms = new ArrayList<>();
 	private VersionStrategy versionStrategy;
 	private Path dotmvnDirectory;
+	private VersionConfig versionConfig;
 
 	@Override
 	public Model read(File input, Map<String, ?> options) throws IOException {
@@ -85,7 +86,8 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 			GAV extensionGAV = Util.extensionArtifact();
 			LOGGER.info(MessageUtils.buffer().a("--- ").mojo(extensionGAV).a(" ").strong("[core-extension]").a(" ---")
 					.toString());
-			versionStrategy = new JGitVersioner(loadConfig()).version();
+			versionConfig = loadConfig();
+			versionStrategy = new JGitVersioner(versionConfig).version();
 			findRelatedProjects(projectModel);
 			initialized = true;
 		}
@@ -134,7 +136,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 				: projectModel.getGroupId();
 	}
 
-	private static void addVersionerBuildPlugin(Model projectModel) {
+	private void addVersionerBuildPlugin(Model projectModel) {
 		GAV extensionGAV = Util.extensionArtifact();
 		LOGGER.debug("Adding build plugin version {}", extensionGAV);
 		if (projectModel.getBuild() == null) {
@@ -163,10 +165,11 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 				addExecution = false;
 			}
 		}
+		addPluginConfiguration(plugin);
 		if (addExecution) {
 			LOGGER.debug("Adding build plugin execution for {}", plugin.getKey());
 			PluginExecution execution = new PluginExecution();
-			execution.setId("extension-set");
+			execution.setId("git-versioner-set");
 			execution.setGoals(Collections.singletonList("set"));
 			plugin.addExecution(execution);
 		}
@@ -174,26 +177,47 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 			projectModel.getBuild().getPlugins().add(0, plugin);
 	}
 
+	/**
+	 * Add plugin configuration from version properties
+	 * 
+	 * @param plugin
+	 */
+	private void addPluginConfiguration(Plugin plugin) {
+		// Version keywords are used by version commit goals.
+		String config = String.format(
+				"<configuration>	<versionConfig>		<keywords>			<majorKey>%s</majorKey>"
+						+ "			<minorKey>%s</minorKey>			<patchKey>%s</patchKey>"
+						+ "		</keywords>	</versionConfig></configuration>",
+				versionConfig.getKeywords().getMajorKey(), versionConfig.getKeywords().getMinorKey(),
+				versionConfig.getKeywords().getPatchKey());
+		try {
+			Xpp3Dom configDom = Xpp3DomBuilder.build(new StringReader(config));
+			plugin.setConfiguration(configDom);
+		} catch (XmlPullParserException | IOException e) {
+			throw new GitVersionerException(e.getMessage(), e);
+		}
+	}
+
 	private VersionConfig loadConfig() {
-		VersionConfig versionConfig = new VersionConfig();
+		VersionConfig coreVersionConfig = new VersionConfig();
 		Properties properties = loadExtensionProperties();
 		InitialVersion version = new InitialVersion();
 		version.setMajor(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_MAJOR, "0")));
 		version.setMinor(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_MINOR, "0")));
 		version.setPatch(Integer.parseInt(properties.getProperty(InitialVersion.GV_INITIAL_VERSION_PATCH, "0")));
-		versionConfig.setInitial(version);
+		coreVersionConfig.setInitial(version);
 
 		VersionKeywords keywords = new VersionKeywords();
 		keywords.setMajorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MAJOR_KEY));
 		keywords.setMinorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MINOR_KEY));
 		keywords.setPatchKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_PATCH_KEY));
-		versionConfig.setKeywords(keywords);
+		coreVersionConfig.setKeywords(keywords);
 
 		VersionPattern versionPattern = new VersionPattern();
 		versionPattern.setPattern(properties.getProperty(VersionPattern.GV_PATTERN_PATTERN));
-		versionConfig.setVersionPattern(versionPattern);
+		coreVersionConfig.setVersionPattern(versionPattern);
 
-		return versionConfig;
+		return coreVersionConfig;
 	}
 	private Properties loadExtensionProperties() {
 		Properties props = new Properties();
