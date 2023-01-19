@@ -29,6 +29,9 @@ It then computes the version number upto current commit.
 The extension supports generating Semantic Versions `x.y.z` format. The format pattern is configurable to use
 values such as Git hash, branch name etc.
 
+See https://github.com/manikmagar/git-versioner-maven-extension-examples[manikmagar/git-versioner-maven-extension-examples]
+ for examples of using this extension.
+ 
 [#versionKeywords]
 == What are version keywords?
 *Version keywords* are the reserved words that describes which milestone of the release is this.
