@@ -31,6 +31,12 @@ _To trigger the release:_
  ./mvnw com.github.manikmagar:git-versioner-maven-plugin:V-LATEST-SNAPSHOT:commit-patch --non-recursive
 ----
 
+.Example goal to increment minor
+[source,shell]
+----
+ ./mvnw com.github.manikmagar:git-versioner-maven-plugin:V-LATEST-SNAPSHOT:commit-minor --non-recursive
+----
+
 *Verify* the new version by running plugin's `print` goal -
 
 [source,shell]
@@ -76,9 +82,10 @@ This should create a tag with current verison.
 # push branch commit
 git push
 
+tagName=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
 # push the new tag
 # example - git push origin v0.6.0
-git push origin {tagName}
+git push origin v$tagName
 ----
 
 *Monitor* GitHub Actions Workflows for https://github.com/manikmagar/git-versioner-maven-plugin/actions/workflows/release.yml[release].

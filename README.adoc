@@ -105,6 +105,8 @@ to add an *_empty commit_* with appropriate link:#versionKeywords[Version Keywor
 - `git-versioner:commit-minor`: Adds a git commit with a commit message containing *Minor* version keyword
 - `git-versioner:commit-patch`: Adds a git commit with a commit message containing *Patch* version keyword
 
+CAUTION: Use `--non-recursive` flag when running commit goal in a multi-module maven project to adding one commit per included module.
+
 The default message pattern is `chore(release): [%k]` where `[%k]` is the keyword token.
 To change the default message pattern, you could pass `-Dgv.commit.message=<message>` argument when running the goal.
 
@@ -114,7 +116,7 @@ with *NO* any additional configuration.
 .Example commit patch with a custom message
 [source, shell]
 ----
-mvn git-versioner:commit-patch "-Dgv.commit.message=chore: [%k] release"
+mvn git-versioner:commit-patch "-Dgv.commit.message=chore: [%k] release" --non-recursive
 ----
 
 Off course, you can also add commits manually with appropriate version keywords.
