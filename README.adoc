@@ -82,7 +82,7 @@ is used by Maven reactor. Try running `mvn package` on your project.
 It is possible that your project is already released with a certain version.
 In that case, you can configure the initial version to start counting versions from.
 
-You can add following properties to `.mvn/git-versioner-extension.properties` file -
+You can add following properties to `.mvn/git-versioner.extensions.properties` file -
 
 .Example configuration for initial version for extension mode
 [source,properties]
@@ -108,7 +108,7 @@ to add an *_empty commit_* with appropriate link:#versionKeywords[Version Keywor
 - `git-versioner:commit-minor`: Adds a git commit with a commit message containing *Minor* version keyword
 - `git-versioner:commit-patch`: Adds a git commit with a commit message containing *Patch* version keyword
 
-CAUTION: Use `--non-recursive` flag when running commit goal in a multi-module maven project to adding one commit per included module.
+CAUTION: Use `--non-recursive` flag when running commit goal in a multi-module maven project to avoid adding one commit per included module.
 
 The default message pattern is `chore(release): [%k]` where `[%k]` is the keyword token.
 To change the default message pattern, you could pass `-Dgv.commit.message=<message>` argument when running the goal.
@@ -136,7 +136,7 @@ git commit --allow-empty -m "chore: [<keyword>] release" // <1>
 
 The default version pattern used is `major.minor.patch(-commit)` where `(-commit)` is skipped if commit count is 0.
 
-This pattern can be canged by setting a property in `.mvn/git-versioner-extension.properties`.
+This pattern can be canged by setting a property in `.mvn/git-versioner.extensions.properties`.
 
 The following example will generate versions as `major.minor.patch+shorthash`, eg. `1.2.3+a5a29f8`.
 
@@ -192,7 +192,7 @@ when c > 0, = 5 -> _1.2.3-**5**_
 == How to customize version keywords?
 The default link:#versionKeywords[version keywords] `[major]`, `[minor]`, and `[patch]` can be customized by overriding the configuration.
 
-To use different keywords, you can add following properties to `.mvn/git-versioner-extension.properties` file -
+To use different keywords, you can add following properties to `.mvn/git-versioner.extensions.properties` file -
 
 .Example configuration for initial version for extension mode
 [source,properties]
