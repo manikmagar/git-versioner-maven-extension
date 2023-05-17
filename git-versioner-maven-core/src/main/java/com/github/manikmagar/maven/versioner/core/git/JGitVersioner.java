@@ -6,6 +6,7 @@ import com.github.manikmagar.maven.versioner.core.version.*;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,14 +14,16 @@ import java.util.stream.StreamSupport;
 
 public class JGitVersioner implements Versioner {
 
+	File basePath;
 	VersionConfig versionConfig;
 
-	public JGitVersioner(VersionConfig versionConfig) {
+	public JGitVersioner(File basePath, VersionConfig versionConfig) {
 		this.versionConfig = versionConfig;
+		this.basePath = basePath;
 	}
 
 	public VersionStrategy version() {
-		return JGit.executeOperation(git -> {
+		return JGit.executeOperation(basePath, git -> {
 			var branch = git.getRepository().getBranch();
 			Ref head = git.getRepository().findRef("HEAD");
 			var hash = "";

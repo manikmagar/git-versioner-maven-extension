@@ -40,7 +40,7 @@ public abstract class AbstractVersionerMojo extends AbstractMojo {
 	}
 
 	protected Versioner getVersioner() {
-		return new JGitVersioner(getVersionConfig().toVersionConfig());
+		return new JGitVersioner(mavenProject.getBasedir().getAbsoluteFile(), getVersionConfig().toVersionConfig());
 	}
 
 	protected String replaceTokens(String pattern, VersionStrategy versionStrategy) {

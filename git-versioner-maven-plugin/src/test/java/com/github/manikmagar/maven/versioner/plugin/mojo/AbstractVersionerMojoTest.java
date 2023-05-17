@@ -7,10 +7,10 @@ import com.github.manikmagar.maven.versioner.plugin.mojo.params.InitialVersionPa
 import com.github.manikmagar.maven.versioner.plugin.mojo.params.VersionConfigParam;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 
-import com.github.manikmagar.maven.versioner.core.params.InitialVersion;
-import com.github.manikmagar.maven.versioner.core.params.VersionConfig;
+import java.io.File;
 
 import static com.github.manikmagar.maven.versioner.core.params.VersionKeywords.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AbstractVersionerMojoTest {
 
 	private AbstractVersionerMojo testMojo = new AbstractVersionerMojo() {
+
+		{
+			mavenProject = new MavenProject();
+			mavenProject.setFile(new File("my/pom.xml"));
+		}
 		@Override
 		public void execute() throws MojoExecutionException, MojoFailureException {
 

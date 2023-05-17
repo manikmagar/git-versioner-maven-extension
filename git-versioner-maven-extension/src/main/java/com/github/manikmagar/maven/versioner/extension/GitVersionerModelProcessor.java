@@ -87,7 +87,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 			LOGGER.info(MessageUtils.buffer().a("--- ").mojo(extensionGAV).a(" ").strong("[core-extension]").a(" ---")
 					.toString());
 			versionConfig = loadConfig();
-			versionStrategy = new JGitVersioner(versionConfig).version();
+			versionStrategy = new JGitVersioner(projectModel.getPomFile().getAbsoluteFile(), versionConfig).version();
 			findRelatedProjects(projectModel);
 			initialized = true;
 		}
