@@ -29,10 +29,14 @@ public final class VersionKeywordsParam {
 	@Parameter(name = "patchKey", defaultValue = KEY_PATCH, property = GV_KEYWORDS_PATCH_KEY)
 	private String patchKey = KEY_PATCH;
 
-	public VersionKeywordsParam(String majorKey, String minorKey, String patchKey) {
+	@Parameter(name = "useRegex", defaultValue = "false", property = GV_KEYWORDS_KEY_USEREGEX)
+	private boolean useRegex = false;
+
+	public VersionKeywordsParam(String majorKey, String minorKey, String patchKey, boolean useRegex) {
 		this.majorKey = majorKey;
 		this.minorKey = minorKey;
 		this.patchKey = patchKey;
+		this.useRegex = useRegex;
 	}
 
 	public VersionKeywordsParam() {
@@ -51,8 +55,12 @@ public final class VersionKeywordsParam {
 		return patchKey;
 	}
 
+	public boolean isUseRegex() {
+		return useRegex;
+	}
+
 	public VersionKeywords toVersionKeywords() {
-		return new VersionKeywords(getMajorKey(), getMinorKey(), getPatchKey());
+		return new VersionKeywords(getMajorKey(), getMinorKey(), getPatchKey(), isUseRegex());
 	}
 	@Override
 	public boolean equals(Object o) {
@@ -62,7 +70,7 @@ public final class VersionKeywordsParam {
 			return false;
 		VersionKeywordsParam that = (VersionKeywordsParam) o;
 		return getMajorKey().equals(that.getMajorKey()) && getMinorKey().equals(that.getMinorKey())
-				&& getPatchKey().equals(that.getPatchKey());
+				&& getPatchKey().equals(that.getPatchKey()) && isUseRegex() == that.isUseRegex();
 	}
 
 	@Override
