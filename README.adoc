@@ -31,7 +31,7 @@ values such as Git hash, branch name etc.
 
 See https://github.com/manikmagar/git-versioner-maven-extension-examples[manikmagar/git-versioner-maven-extension-examples]
  for examples of using this extension.
- 
+
 [#versionKeywords]
 == What are version keywords?
 *Version keywords* are the reserved words that describes which milestone of the release is this.
@@ -202,6 +202,20 @@ gv.keywords.minorKey=[SMALL]
 gv.keywords.patchKey=[FIX]
 ----
 
+=== Use regex for version keywords
+You can also use regex to match version keywords.
+This is useful when you want to be sure that the version keyword will only be matched when it is the first word in the commit message.
+So if for example you have a merge commit message which contains the messages of the merged commits, you can use a regex to match only the first commit message.
+
+To use regex for version keywords, you can add following properties to `.mvn/git-versioner.extensions.properties` file -
+
+.Example configuration for regex version keywords
+----
+gv.keywords.useRegex=true
+gv.keywords.majorKey=^\\[major\\].*
+gv.keywords.minorKey=^\\[minor\\].*
+gv.keywords.patchKey=^\\[patch\\].*
+----
 
 == How to access generated version properties?
 This extension adds all version properties to *Maven properties* during build cycle -
