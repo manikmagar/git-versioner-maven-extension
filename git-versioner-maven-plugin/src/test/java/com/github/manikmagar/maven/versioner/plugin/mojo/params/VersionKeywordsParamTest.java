@@ -9,8 +9,8 @@ public class VersionKeywordsParamTest {
 
 	@Test
 	public void newVersionKeywords() {
-		assertThat(new VersionKeywords("[big]", "[medium]", "[small]", false)).extracting("majorKey", "minorKey", "patchKey")
-				.containsExactly("[big]", "[medium]", "[small]");
+		assertThat(new VersionKeywords("[big]", "[medium]", "[small]", false))
+				.extracting("majorKey", "minorKey", "patchKey").containsExactly("[big]", "[medium]", "[small]");
 	}
 
 	@Test

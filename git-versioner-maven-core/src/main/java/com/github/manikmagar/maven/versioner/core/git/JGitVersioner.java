@@ -42,7 +42,7 @@ public class JGitVersioner implements Versioner {
 					versionStrategy.increment(VersionComponentType.MAJOR, hash);
 				} else if (hasValue(commit.getFullMessage(), versionConfig.getKeywords().getMinorKey())) {
 					versionStrategy.increment(VersionComponentType.MINOR, hash);
-				} else if (hasValue(commit.getFullMessage(),versionConfig.getKeywords().getPatchKey())) {
+				} else if (hasValue(commit.getFullMessage(), versionConfig.getKeywords().getPatchKey())) {
 					versionStrategy.increment(VersionComponentType.PATCH, hash);
 				} else {
 					versionStrategy.increment(VersionComponentType.COMMIT, hash);
@@ -53,9 +53,9 @@ public class JGitVersioner implements Versioner {
 	}
 
 	boolean hasValue(String commitMessage, String keyword) {
-		if(versionConfig.getKeywords().isUseRegex()){
+		if (versionConfig.getKeywords().isUseRegex()) {
 			return commitMessage.matches(keyword);
-		}else {
+		} else {
 			return commitMessage.contains(keyword);
 		}
 	}
