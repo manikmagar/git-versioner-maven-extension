@@ -12,7 +12,7 @@ public class VersionPatternStrategy extends SemVerStrategy {
 	public VersionPatternStrategy(int major, int minor, int patch, String branchName, String hashRef,
 			String versionPattern) {
 		super(major, minor, patch, branchName, hashRef);
-		if (versionPattern == null || versionPattern.isBlank()) {
+		if (versionPattern == null || versionPattern.trim().isEmpty()) {
 			this.versionPattern = DEFAULT_VERSION_PATTERN;
 		} else {
 			this.versionPattern = versionPattern;
@@ -69,7 +69,7 @@ public class VersionPatternStrategy extends SemVerStrategy {
 				// Full regex to match the version string containing group regex
 				var fullRegex = ".*" + token.getTokenGroupRegex() + ".*";
 				if (Pattern.matches(fullRegex, text)) {
-					if (value != null && !value.isBlank() && !value.equals("0")) {
+					if (value != null && !value.trim().isEmpty() && !value.equals("0")) {
 						text = text.replace(token.getToken(), value);
 					} else {
 						text = text.replaceAll(token.getTokenGroupRegex(), "");

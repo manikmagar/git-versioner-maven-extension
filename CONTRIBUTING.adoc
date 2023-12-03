@@ -1,8 +1,27 @@
 = Contributing
-
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
 
 == Build
 
+=== Java Support
+
+Source code uses *Java 11* for development, however the API compatibility is restricted to *Java 8*.
+This allows us to use the syntactical sugar advancements such as var, switch etc but still _support Java 8 projects_.
+This is achieved with the use of https://github.com/bsideup/jabel[Jabel - javac compiler plugin].
+
+- Development dependency: Java 11
+- Runtime dependency: Java 8+
+
+WARNING: Using Java 9+ APIs will result in compilation failure. See https://github.com/bsideup/jabel#how-jabel-works[how and why Jabel works] for more details.
+
+=== Installation
 Install artifacts to local repository -
 
 [source,shell]
@@ -11,7 +30,7 @@ Install artifacts to local repository -
 ----
 
 == Releasing
-Github Actions workflow is configured to use this same extension to version the project
+GitHub Actions workflow is configured to use this same extension to version the project
 and then use https://jreleaser.org/[JReleaser] to release this to https://search.maven.org/search?q=a:git-versioner-maven-extension[Maven Central].
 
 _To trigger the release:_
