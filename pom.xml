@@ -21,7 +21,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>17</java.version>
+    <java.version>11</java.version>
     <maven.version>3.8.1</maven.version>
     <project.github.repository>manikmagar/git-versioner-maven-plugin</project.github.repository>
     <nexus.url>https://oss.sonatype.org</nexus.url>
