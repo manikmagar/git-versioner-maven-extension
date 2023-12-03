@@ -23,7 +23,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <maven.version>3.6.3</maven.version>
+    <maven.version>3.8.1</maven.version>
     <project.github.repository>manikmagar/git-versioner-maven-plugin</project.github.repository>
     <nexus.url>https://oss.sonatype.org</nexus.url>
     <repository.url>git@github.com:${project.github.repository}.git</repository.url>
@@ -123,7 +123,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -157,7 +157,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0-M7</version>
+          <version>3.2.2</version>
         </plugin>
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
@@ -211,7 +211,7 @@
       <dependency>
         <groupId>org.eclipse.jgit</groupId>
         <artifactId>org.eclipse.jgit</artifactId>
-        <version>6.4.0.202211300538-r</version>
+        <version>6.6.1.202309021850-r</version>
       </dependency>
       <dependency>
         <groupId>org.twdata.maven</groupId>
@@ -262,7 +262,7 @@
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.23.1</version>
+        <version>3.24.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>

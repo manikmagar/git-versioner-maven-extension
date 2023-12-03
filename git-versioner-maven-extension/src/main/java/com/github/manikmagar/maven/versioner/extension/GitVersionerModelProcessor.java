@@ -187,9 +187,10 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		String config = String.format(
 				"<configuration>	<versionConfig>		<keywords>			<majorKey>%s</majorKey>"
 						+ "			<minorKey>%s</minorKey>			<patchKey>%s</patchKey>"
+						+ "			<useRegex>%s</useRegex>"
 						+ "		</keywords>	</versionConfig></configuration>",
 				versionConfig.getKeywords().getMajorKey(), versionConfig.getKeywords().getMinorKey(),
-				versionConfig.getKeywords().getPatchKey());
+				versionConfig.getKeywords().getPatchKey(), versionConfig.getKeywords().isUseRegex());
 		try {
 			Xpp3Dom configDom = Xpp3DomBuilder.build(new StringReader(config));
 			plugin.setConfiguration(configDom);
@@ -211,6 +212,7 @@ public class GitVersionerModelProcessor extends DefaultModelProcessor {
 		keywords.setMajorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MAJOR_KEY));
 		keywords.setMinorKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_MINOR_KEY));
 		keywords.setPatchKey(properties.getProperty(VersionKeywords.GV_KEYWORDS_PATCH_KEY));
+		keywords.setUseRegex(properties.getProperty(VersionKeywords.GV_KEYWORDS_KEY_USEREGEX,"false").equals("true"));
 		coreVersionConfig.setKeywords(keywords);
 
 		VersionPattern versionPattern = new VersionPattern();

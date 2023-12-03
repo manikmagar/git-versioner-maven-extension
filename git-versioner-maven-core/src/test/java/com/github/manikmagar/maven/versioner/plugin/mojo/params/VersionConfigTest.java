@@ -36,7 +36,17 @@ public class VersionConfigTest {
 		VersionKeywords versionKeywords = new VersionKeywords();
 		versionKeywords.setMajorKey("[TEST]");
 		versionConfig.setKeywords(versionKeywords);
-		assertThat(versionConfig.getKeywords()).extracting("majorKey", "minorKey", "patchKey").containsExactly("[TEST]",
-				KEY_MINOR, KEY_PATCH);
+		assertThat(versionConfig.getKeywords()).extracting("majorKey", "minorKey", "patchKey", "useRegex").containsExactly("[TEST]",
+				KEY_MINOR, KEY_PATCH, false);
+	}
+
+	@Test
+	public void setUseRegEx() {
+		VersionConfig versionConfig = new VersionConfig();
+		VersionKeywords versionKeywords = new VersionKeywords();
+		versionKeywords.setUseRegex(true);
+		versionConfig.setKeywords(versionKeywords);
+		assertThat(versionConfig.getKeywords()).extracting("majorKey", "minorKey", "patchKey", "useRegex").containsExactly(KEY_MAJOR,
+				KEY_MINOR, KEY_PATCH, true);
 	}
 }

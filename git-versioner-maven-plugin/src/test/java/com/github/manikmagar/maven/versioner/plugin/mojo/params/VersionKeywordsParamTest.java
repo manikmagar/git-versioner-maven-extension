@@ -9,7 +9,7 @@ public class VersionKeywordsParamTest {
 
 	@Test
 	public void newVersionKeywords() {
-		assertThat(new VersionKeywords("[big]", "[medium]", "[small]")).extracting("majorKey", "minorKey", "patchKey")
+		assertThat(new VersionKeywords("[big]", "[medium]", "[small]", false)).extracting("majorKey", "minorKey", "patchKey")
 				.containsExactly("[big]", "[medium]", "[small]");
 	}
 
@@ -20,8 +20,8 @@ public class VersionKeywordsParamTest {
 	}
 	@Test
 	public void toCustomVersionKeywords() {
-		assertThat(new VersionKeywordsParam("[big]", "[medium]", "[small]"))
+		assertThat(new VersionKeywordsParam("[big]", "[medium]", "[small]", false))
 				.extracting(VersionKeywordsParam::toVersionKeywords)
-				.isEqualTo(new VersionKeywords("[big]", "[medium]", "[small]"));
+				.isEqualTo(new VersionKeywords("[big]", "[medium]", "[small]", false));
 	}
 }

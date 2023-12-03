@@ -13,6 +13,7 @@ public final class VersionKeywords {
 	public static final String GV_KEYWORDS_MAJOR_KEY = "gv.keywords.majorKey";
 	public static final String GV_KEYWORDS_MINOR_KEY = "gv.keywords.minorKey";
 	public static final String GV_KEYWORDS_PATCH_KEY = "gv.keywords.patchKey";
+	public static final String GV_KEYWORDS_KEY_USEREGEX = "gv.keywords.useRegex";
 
 	/**
 	 * The keyword for calculating major version of the SemVer.
@@ -26,11 +27,16 @@ public final class VersionKeywords {
 	 * The keyword for calculating patch version of the SemVer.
 	 */
 	private String patchKey = KEY_PATCH;
+	/**
+	 * Whether to use regex for matching keywords.
+	 */
+	private boolean useRegex = false;
 
-	public VersionKeywords(String majorKey, String minorKey, String patchKey) {
+	public VersionKeywords(String majorKey, String minorKey, String patchKey, boolean useRegex) {
 		setMajorKey(majorKey);
 		setMinorKey(minorKey);
 		setPatchKey(patchKey);
+		setUseRegex(useRegex);
 	}
 	public VersionKeywords() {
 
@@ -70,6 +76,14 @@ public final class VersionKeywords {
 		} else {
 			this.patchKey = patchKey;
 		}
+	}
+
+	public void setUseRegex(boolean useRegex) {
+		this.useRegex = useRegex;
+	}
+
+	public boolean isUseRegex() {
+		return useRegex;
 	}
 
 	@Override
