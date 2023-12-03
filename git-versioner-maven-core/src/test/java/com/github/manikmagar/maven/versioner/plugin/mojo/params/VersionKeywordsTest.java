@@ -15,8 +15,8 @@ public class VersionKeywordsTest {
 
 	@Test
 	public void defaultKeywords() {
-		assertThat(new VersionKeywords()).extracting("majorKey", "minorKey", "patchKey","useRegex").containsExactly(KEY_MAJOR,
-				KEY_MINOR, KEY_PATCH, false);
+		assertThat(new VersionKeywords()).extracting("majorKey", "minorKey", "patchKey", "useRegex")
+				.containsExactly(KEY_MAJOR, KEY_MINOR, KEY_PATCH, false);
 	}
 
 	@Test

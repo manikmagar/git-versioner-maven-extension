@@ -12,8 +12,8 @@ public class JGit {
 	private JGit() {
 	}
 
-	public static <R> R executeOperation(Operation<Git, R> work) throws GitVersionerException {
-		try (Repository repository = new FileRepositoryBuilder().readEnvironment().findGitDir().build()) {
+	public static <R> R executeOperation(File basePath, Operation<Git, R> work) throws GitVersionerException {
+		try (Repository repository = new FileRepositoryBuilder().readEnvironment().findGitDir(basePath).build()) {
 			try (Git git = new Git(repository)) {
 				return work.apply(git);
 			}
@@ -24,8 +24,6 @@ public class JGit {
 
 	/**
 	 * Find local git dir by scanning upwards to find .git dir
-	 * 
-	 * @return
 	 */
 	public static String findGitDir(String basePath) {
 		try (Repository repository = new FileRepositoryBuilder().readEnvironment().findGitDir(new File(basePath))

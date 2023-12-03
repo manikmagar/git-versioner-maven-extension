@@ -58,12 +58,12 @@ public class Tag extends AbstractVersionerMojo {
 		var tagMessage = replaceTokens(getTagMessagePattern(), versionStrategy);
 		getLog().info("Current Version: " + versionStrategy.toVersionString());
 		getLog().info(String.format("Tag Version '%s' with message '%s'", tagName, tagMessage));
-		if (GitTag.exists(tagName)) {
+		if (GitTag.exists(mavenProject.getBasedir().getAbsoluteFile(), tagName)) {
 			getLog().error(String.format("Tag already exist: %s", tagName));
 			if (isFailWhenTagExist())
 				throw new GitVersionerException("Tag already exist: " + tagName);
 		} else {
-			String tagId = GitTag.create(tagName, tagMessage);
+			String tagId = GitTag.create(mavenProject.getBasedir().getAbsoluteFile(), tagName, tagMessage);
 			getLog().info(String.format("Created tag: '%s'", tagId));
 		}
 	}

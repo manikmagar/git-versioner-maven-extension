@@ -6,6 +6,7 @@ import com.github.manikmagar.maven.versioner.core.version.*;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,14 +14,16 @@ import java.util.stream.StreamSupport;
 
 public class JGitVersioner implements Versioner {
 
+	File basePath;
 	VersionConfig versionConfig;
 
-	public JGitVersioner(VersionConfig versionConfig) {
+	public JGitVersioner(File basePath, VersionConfig versionConfig) {
 		this.versionConfig = versionConfig;
+		this.basePath = basePath;
 	}
 
 	public VersionStrategy version() {
-		return JGit.executeOperation(git -> {
+		return JGit.executeOperation(basePath, git -> {
 			var branch = git.getRepository().getBranch();
 			Ref head = git.getRepository().findRef("HEAD");
 			var hash = "";
@@ -39,7 +42,7 @@ public class JGitVersioner implements Versioner {
 					versionStrategy.increment(VersionComponentType.MAJOR, hash);
 				} else if (hasValue(commit.getFullMessage(), versionConfig.getKeywords().getMinorKey())) {
 					versionStrategy.increment(VersionComponentType.MINOR, hash);
-				} else if (hasValue(commit.getFullMessage(),versionConfig.getKeywords().getPatchKey())) {
+				} else if (hasValue(commit.getFullMessage(), versionConfig.getKeywords().getPatchKey())) {
 					versionStrategy.increment(VersionComponentType.PATCH, hash);
 				} else {
 					versionStrategy.increment(VersionComponentType.COMMIT, hash);
@@ -50,9 +53,9 @@ public class JGitVersioner implements Versioner {
 	}
 
 	boolean hasValue(String commitMessage, String keyword) {
-		if(versionConfig.getKeywords().isUseRegex()){
+		if (versionConfig.getKeywords().isUseRegex()) {
 			return commitMessage.matches(keyword);
-		}else {
+		} else {
 			return commitMessage.contains(keyword);
 		}
 	}

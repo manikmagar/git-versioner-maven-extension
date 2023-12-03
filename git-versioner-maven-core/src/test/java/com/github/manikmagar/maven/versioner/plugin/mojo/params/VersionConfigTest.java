@@ -36,8 +36,8 @@ public class VersionConfigTest {
 		VersionKeywords versionKeywords = new VersionKeywords();
 		versionKeywords.setMajorKey("[TEST]");
 		versionConfig.setKeywords(versionKeywords);
-		assertThat(versionConfig.getKeywords()).extracting("majorKey", "minorKey", "patchKey", "useRegex").containsExactly("[TEST]",
-				KEY_MINOR, KEY_PATCH, false);
+		assertThat(versionConfig.getKeywords()).extracting("majorKey", "minorKey", "patchKey", "useRegex")
+				.containsExactly("[TEST]", KEY_MINOR, KEY_PATCH, false);
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class VersionConfigTest {
 		VersionKeywords versionKeywords = new VersionKeywords();
 		versionKeywords.setUseRegex(true);
 		versionConfig.setKeywords(versionKeywords);
-		assertThat(versionConfig.getKeywords()).extracting("majorKey", "minorKey", "patchKey", "useRegex").containsExactly(KEY_MAJOR,
-				KEY_MINOR, KEY_PATCH, true);
+		assertThat(versionConfig.getKeywords()).extracting("majorKey", "minorKey", "patchKey", "useRegex")
+				.containsExactly(KEY_MAJOR, KEY_MINOR, KEY_PATCH, true);
 	}
 }
