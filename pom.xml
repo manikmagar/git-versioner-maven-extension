@@ -21,8 +21,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <java.version>17</java.version>
     <maven.version>3.8.1</maven.version>
     <project.github.repository>manikmagar/git-versioner-maven-plugin</project.github.repository>
     <nexus.url>https://oss.sonatype.org</nexus.url>
@@ -204,6 +203,20 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>8</release>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <compilerArgs>
+            <arg>-Xplugin:jabel</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencyManagement>
@@ -211,7 +224,8 @@
       <dependency>
         <groupId>org.eclipse.jgit</groupId>
         <artifactId>org.eclipse.jgit</artifactId>
-        <version>6.6.1.202309021850-r</version>
+        <!--Using 5.* version to stay compatible with Java 8-->
+        <version>5.13.1.202206130422-r</version>
       </dependency>
       <dependency>
         <groupId>org.twdata.maven</groupId>

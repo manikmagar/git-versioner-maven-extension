@@ -278,5 +278,9 @@ For Tag goal, it is possible to configure pom.xml to contain the git-versioner p
 <2> Tag name pattern to use. Default `v%v` will result in tags like `v1.2.3`.
 <3> Tag message pattern to use. Default `Release version %v` will add tag message like `Release version 1.2.3`.
 
+== Contributing
+
+All contributions are welcome. Please see link:CONTRIBUTING.adoc[Contributing] guides.
+
 == Acknowledgement
 This is inspired from Gradle plugin https://github.com/toolebox-io/gradle-git-versioner[toolebox-io/gradle-git-versioner] that I have been using for my Gradle projects. This maven plugin is my attempt to get those auto-version capabilities into my Maven builds.
